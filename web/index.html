@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Promptuaire — Commandes Claude</title>
+  <style>
+:root {
+  --bg: #1a1714;
+  --bg-2: #211d19;
+  --panel: #262019;
+  --panel-2: #2e2720;
+  --border: #3a322a;
+  --border-soft: #322b24;
+  --text: #ede4d8;
+  --muted: #a89c8c;
+  --faint: #75695a;
+  --accent: #d97757;
+  --accent-2: #e8a87c;
+  --green: #7fae6e;
+  --term-bg: #14110e;
+  --radius: 14px;
+  --shadow: 0 18px 50px rgba(0,0,0,.45);
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(217,119,87,.10), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+/* ---------- Topbar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 20px;
+  padding: 16px 26px;
+  background: rgba(26,23,20,.82);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark {
+  font-size: 26px; color: var(--accent);
+  display: grid; place-items: center;
+  width: 42px; height: 42px;
+  background: linear-gradient(160deg, rgba(217,119,87,.22), rgba(217,119,87,.05));
+  border: 1px solid var(--border); border-radius: 12px;
+}
+.topbar h1 { font-size: 17px; margin: 0; letter-spacing: .2px; }
+.brand-sub { margin: 0; font-size: 12.5px; color: var(--muted); }
+.brand-credit { margin: 1px 0 0; font-size: 10px; color: var(--faint); letter-spacing: .4px; }
+.brand-credit b { font-weight: 600; color: var(--accent-2); opacity: .75; }
+.search-wrap { position: relative; flex: 1; max-width: 480px; margin-left: auto; }
+.search-wrap input {
+  width: 100%; padding: 11px 40px 11px 16px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 11px; color: var(--text); font-size: 14px;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(217,119,87,.16); }
+.search-wrap kbd {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font: 600 11px/1 ui-monospace, monospace; color: var(--faint);
+  background: var(--bg-2); border: 1px solid var(--border);
+  padding: 4px 7px; border-radius: 6px;
+}
+
+/* ---------- Platform toggle ---------- */
+.platform-toggle {
+  display: inline-flex; padding: 3px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  flex-shrink: 0;
+}
+.platform-toggle button {
+  border: none; background: transparent; color: var(--muted);
+  font: 600 12px/1 ui-sans-serif, sans-serif; padding: 7px 12px;
+  border-radius: 8px; cursor: pointer; transition: all .14s;
+}
+.platform-toggle button.active { background: var(--accent); color: #1a1714; }
+.platform-toggle button:not(.active):hover { color: var(--text); }
+
+/* ---------- Layout ---------- */
+.layout { display: grid; grid-template-columns: 248px 1fr; align-items: start; }
+
+.sidebar {
+  position: sticky; top: 75px; align-self: start;
+  height: calc(100vh - 75px); overflow-y: auto;
+  padding: 22px 16px; border-right: 1px solid var(--border-soft);
+}
+#nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px; border-radius: 10px;
+  color: var(--muted); cursor: pointer; font-size: 14px;
+  border: 1px solid transparent; transition: all .14s;
+  user-select: none;
+}
+.nav-item:hover { background: var(--panel); color: var(--text); }
+.nav-item.active { background: var(--panel-2); color: var(--text); border-color: var(--border); }
+.nav-item .ic {
+  width: 26px; height: 26px; display: grid; place-items: center;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 13px; color: var(--accent-2);
+}
+.nav-item .ct { margin-left: auto; font-size: 11px; color: var(--faint); }
+
+.legend { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
+.legend h4 { margin: 0 0 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--faint); }
+.legend ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.legend li { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--muted); }
+
+/* difficulty dots */
+.dots { display: inline-flex; gap: 3px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+.dot.on.d1 { background: #7fae6e; }
+.dot.on.d2 { background: #b7c065; }
+.dot.on.d3 { background: #e0b24e; }
+.dot.on.d4 { background: #e08a4e; }
+.dot.on.d5 { background: #d9574e; }
+
+/* ---------- Content ---------- */
+.content { padding: 30px 34px 80px; min-width: 0; }
+.intro h2 { font-size: 24px; margin: 0 0 10px; }
+.intro > p { color: var(--muted); max-width: 760px; margin: 0 0 26px; }
+
+.section-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.section-card {
+  text-align: left; cursor: pointer;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; color: var(--text);
+  transition: transform .14s, border-color .14s, background .14s;
+}
+.section-card:hover { transform: translateY(-2px); border-color: var(--accent); background: var(--panel-2); }
+.section-card .sc-ic { font-size: 20px; color: var(--accent-2); }
+.section-card h3 { margin: 10px 0 4px; font-size: 15px; }
+.section-card p { margin: 0; font-size: 12.5px; color: var(--muted); }
+.section-card .sc-n { margin-top: 12px; font-size: 11px; color: var(--faint); }
+
+.results-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.results-head h2 { font-size: 20px; margin: 0; }
+.count { font-size: 13px; color: var(--faint); }
+
+/* ---------- Sub-section chips ---------- */
+.sub-chips { display: flex; gap: 8px; margin: 0 0 18px; flex-wrap: wrap; }
+.sub-chips[hidden] { display: none; }
+.chip {
+  border: 1px solid var(--border); background: var(--panel); color: var(--muted);
+  font: 600 12.5px/1 ui-sans-serif, sans-serif; padding: 8px 14px;
+  border-radius: 999px; cursor: pointer; transition: all .14s;
+}
+.chip:hover { color: var(--text); border-color: var(--accent); }
+.chip.active { background: var(--accent); border-color: var(--accent); color: #1a1714; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 16px 14px; cursor: pointer;
+  transition: transform .14s, border-color .14s, background .14s;
+  display: flex; flex-direction: column; gap: 9px;
+}
+.card:hover { transform: translateY(-2px); border-color: var(--accent); background: var(--panel-2); }
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.card-name { font-family: ui-monospace, monospace; font-size: 14px; color: var(--text); font-weight: 600; }
+.card-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--accent-2); }
+.card-desc { font-size: 13px; color: var(--muted); margin: 0; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+.diff-label { font-size: 11.5px; color: var(--faint); }
+
+.empty { color: var(--muted); text-align: center; padding: 60px 0; }
+
+/* ---------- Detail panel ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(10,8,6,.55);
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  opacity: 0; visibility: hidden;
+  transition: opacity .3s ease, visibility 0s linear .3s;
+}
+.overlay.is-open { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+
+.detail {
+  position: fixed; top: 0; right: 0; z-index: 50;
+  width: 50vw; height: 100vh; overflow-y: auto;
+  background: var(--bg-2); border-left: 1px solid var(--border);
+  box-shadow: var(--shadow); padding: 26px 28px 50px;
+  transform: translateX(100%); visibility: hidden;
+  transition: transform .42s cubic-bezier(.22,1,.36,1), visibility 0s linear .42s;
+  will-change: transform;
+}
+.detail.is-open {
+  transform: none; visibility: visible;
+  transition: transform .42s cubic-bezier(.22,1,.36,1);
+}
+
+/* Révélation en cascade du contenu de la fiche à l'ouverture */
+@media (prefers-reduced-motion: no-preference) {
+  .detail.is-open #detail-body > * { animation: dRise .42s cubic-bezier(.22,1,.36,1) backwards; }
+  .detail.is-open #detail-body > *:nth-child(1) { animation-delay: .05s; }
+  .detail.is-open #detail-body > *:nth-child(2) { animation-delay: .09s; }
+  .detail.is-open #detail-body > *:nth-child(3) { animation-delay: .13s; }
+  .detail.is-open #detail-body > *:nth-child(4) { animation-delay: .17s; }
+  .detail.is-open #detail-body > *:nth-child(5) { animation-delay: .21s; }
+  .detail.is-open #detail-body > *:nth-child(6) { animation-delay: .25s; }
+  .detail.is-open #detail-body > *:nth-child(n+7) { animation-delay: .29s; }
+}
+@keyframes dRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* Accessibilité : on coupe le mouvement si l'utilisateur le demande */
+@media (prefers-reduced-motion: reduce) {
+  .detail, .detail.is-open, .overlay, .overlay.is-open { transition-duration: .001s; }
+}
+.detail-close {
+  position: absolute; top: 18px; right: 18px;
+  background: var(--panel); border: 1px solid var(--border); color: var(--muted);
+  width: 34px; height: 34px; border-radius: 9px; cursor: pointer; font-size: 14px;
+}
+.detail-close:hover { color: var(--text); border-color: var(--accent); }
+
+.d-cat { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--accent-2); }
+.d-name { font-family: ui-monospace, monospace; font-size: 24px; margin: 6px 0 4px; }
+.d-one { color: var(--muted); margin: 0 0 18px; font-size: 14.5px; }
+
+.d-meta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--border-soft); border-radius: 11px; }
+.d-meta .mlabel { font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: .6px; }
+.d-meta .mval { font-size: 13.5px; }
+
+.d-mockup { margin: 0 0 22px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--term-bg); }
+.d-mockup svg { display: block; width: 100%; height: auto; }
+
+.d-block { margin-bottom: 20px; }
+.d-block h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--faint); margin: 0 0 8px; }
+.d-block p { margin: 0; font-size: 14px; color: var(--text); }
+
+/* « En clair » — vulgarisation débutant */
+.d-simple {
+  background: linear-gradient(160deg, rgba(217,119,87,.10), rgba(217,119,87,.03));
+  border: 1px solid rgba(217,119,87,.25);
+  border-radius: 11px; padding: 13px 15px;
+  font-size: 14px; color: var(--text);
+}
+.d-simple .tag { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .8px; color: var(--accent-2); margin-bottom: 5px; font-weight: 700; }
+
+/* « Pour aller plus loin » — astuce avancée */
+.d-pro {
+  background: var(--panel);
+  border: 1px solid var(--border-soft); border-left: 3px solid var(--green);
+  border-radius: 10px; padding: 13px 15px;
+  font-size: 13.5px; color: var(--text);
+}
+.d-pro .tag { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .8px; color: var(--green); margin-bottom: 5px; font-weight: 700; }
+
+.d-example {
+  font-family: ui-monospace, monospace; font-size: 13px; color: var(--accent-2);
+  background: var(--term-bg); border: 1px solid var(--border);
+  padding: 11px 13px; border-radius: 9px; white-space: pre-wrap; word-break: break-word;
+}
+.d-notes { font-size: 13px; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; }
+
+.d-platform-hint { font-size: 11.5px; color: var(--faint); margin: -12px 0 18px; }
+
+/* ---------- Bouton flottant « Signaler » (overlay du panneau de détail) ---------- */
+.detail-fab { position: fixed; right: 26px; bottom: 22px; z-index: 60; }
+@media (max-width: 620px) { .detail-fab { right: 16px; bottom: 16px; } }
+.fab-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--panel-2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 9px 15px; font: 600 12.5px/1 ui-sans-serif, sans-serif;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,.45);
+  transition: all .14s;
+}
+.fab-btn:hover { border-color: var(--accent); color: #fff; transform: translateY(-1px); }
+.fab-btn .fab-ic { color: #e0b24e; font-size: 14px; }
+.fab-btn.is-open { border-color: var(--accent); background: var(--accent); color: #1a1714; }
+.fab-btn.is-open .fab-ic { color: #1a1714; }
+
+.report-pop {
+  position: absolute; right: 0; bottom: 52px; width: min(320px, 86vw);
+  background: var(--panel-2); border: 1px solid var(--accent);
+  border-radius: 14px; box-shadow: 0 22px 60px rgba(0,0,0,.6); padding: 16px;
+  animation: popIn .16s ease;
+}
+@keyframes popIn { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+.report-pop[hidden] { display: none; }
+.rp-title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+.rp-sub { font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+.rp-reasons { display: flex; flex-direction: column; gap: 7px; margin-bottom: 11px; }
+.rp-reason {
+  text-align: left; background: var(--panel); color: var(--text);
+  border: 1px solid var(--border); border-radius: 9px;
+  padding: 9px 12px; font-size: 13px; cursor: pointer; transition: all .12s;
+}
+.rp-reason:hover { border-color: var(--accent-2); }
+.rp-reason.sel { border-color: var(--accent); background: rgba(217,119,87,.16); color: #fff; }
+.rp-note {
+  width: 100%; box-sizing: border-box; resize: vertical; min-height: 44px;
+  background: var(--term-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 9px;
+  padding: 9px 11px; font: 13px/1.4 ui-sans-serif, sans-serif; outline: none;
+  margin-bottom: 11px;
+}
+.rp-note:focus { border-color: var(--accent); }
+.rp-actions { display: flex; align-items: center; gap: 10px; }
+.rp-send {
+  flex: 1; background: var(--accent); color: #1a1714; border: none;
+  border-radius: 9px; padding: 10px 12px; font: 700 12.5px/1 ui-sans-serif, sans-serif;
+  cursor: pointer; transition: filter .12s;
+}
+.rp-send:hover { filter: brightness(1.08); }
+.rp-send:disabled { opacity: .45; cursor: not-allowed; }
+.rp-done { font-size: 12px; color: var(--green); margin-top: 9px; }
+.rp-done[hidden] { display: none; }
+
+/* ---------- Footer ---------- */
+.foot {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  padding: 22px 34px; border-top: 1px solid var(--border-soft); color: var(--faint); font-size: 12px;
+}
+.foot .credit b { font-weight: 600; color: var(--accent-2); opacity: .8; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 880px) {
+  .layout { grid-template-columns: 1fr; }
+  .detail { width: min(560px, 94vw); }
+  .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border-soft); }
+  #nav { flex-direction: row; flex-wrap: wrap; }
+  .nav-item .ct { display: none; }
+  .legend { display: none; }
+  .topbar { flex-wrap: wrap; gap: 12px; }
+  .search-wrap { max-width: none; order: 4; flex-basis: 100%; }
+}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">✳</span>
+      <div>
+        <h1>Le Promptuaire</h1>
+        <p class="brand-sub">Commandes Claude · Claude Code <span id="meta-version"></span></p>
+        <p class="brand-credit">Created by <b>Mhosaic</b> — Aurelien</p>
+      </div>
+    </div>
+    <div class="platform-toggle" id="platform-toggle" title="Adapte les raccourcis clavier à votre système">
+      <button data-os="mac"> macOS</button>
+      <button data-os="win">⊞ Windows</button>
+    </div>
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Rechercher une commande, un flag, une fonctionnalité…" autocomplete="off" />
+      <kbd>/</kbd>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav id="nav"></nav>
+      <div class="legend">
+        <h4>Difficulté de prise en main</h4>
+        <ul id="legend-list"></ul>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="intro" class="intro">
+        <h2>Toutes les commandes, en un coup d'œil</h2>
+        <p>Parcourez les <strong>slash commands</strong>, les <strong>flags CLI</strong>, les <strong>raccourcis & modes</strong> (adaptés à votre système via le sélecteur macOS/Windows), les <strong>3 espaces de l'app Claude</strong> (Chat, Cowork, Code) et les <strong>modèles & bonnes pratiques</strong>. Chaque fiche propose une explication « En clair » pour débuter et une astuce « Pour aller plus loin ».</p>
+        <div id="section-cards" class="section-cards"></div>
+      </section>
+
+      <div id="results-head" class="results-head" hidden>
+        <h2 id="results-title"></h2>
+        <span id="results-count" class="count"></span>
+      </div>
+      <div id="sub-chips" class="sub-chips" hidden></div>
+      <div id="grid" class="grid"></div>
+      <p id="empty" class="empty" hidden>Aucun résultat. Essayez un autre terme.</p>
+    </main>
+  </div>
+
+  <!-- Panneau de détail -->
+  <div id="overlay" class="overlay" hidden></div>
+  <aside id="detail" class="detail" hidden aria-hidden="true">
+    <button id="detail-close" class="detail-close" aria-label="Fermer">✕</button>
+    <div id="detail-body"></div>
+
+    <!-- Bouton flottant de signalement (overlay bas-droite) -->
+    <div class="detail-fab">
+      <div id="report-pop" class="report-pop" hidden>
+        <div class="rp-title">Signaler un problème</div>
+        <div class="rp-sub" id="rp-sub">sur cette fiche</div>
+        <div class="rp-reasons" id="rp-reasons"></div>
+        <textarea id="rp-note" class="rp-note" placeholder="Précision (optionnel)…"></textarea>
+        <div class="rp-actions">
+          <button id="rp-send" class="rp-send" disabled>Ouvrir l'e-mail de signalement</button>
+        </div>
+        <p id="rp-done" class="rp-done" hidden>✓ E-mail de signalement ouvert dans ton client mail.</p>
+      </div>
+      <button id="report-btn" class="fab-btn" aria-label="Signaler un problème sur cette fiche">
+        <span class="fab-ic">⚠</span> Signaler
+      </button>
+    </div>
+  </aside>
+
+  <footer class="foot">
+    <span>Source : inspection locale de Claude Code <span class="mono" id="meta-version-2"></span> + documentation officielle · MàJ <span id="meta-updated"></span> · Maintenance : skills /maj-*</span>
+    <span class="credit">Created by <b>Mhosaic</b> — Aurelien</span>
+  </footer>
+
+  <!-- Charge data.js. Sur http(s) (preview/serveur), ajoute un cache-buster pour toujours avoir la dernière version ; sur file:// (double-clic), charge le fichier tel quel. -->
+  <script>
+  (function () {
+    var src = "data.js";
+    if (location.protocol === "http:" || location.protocol === "https:") src += "?v=" + Date.now();
+    document.write('<script src="' + src + '"><\/script>');
+  })();
+  </script>
+  <script>
+(function () {
+  "use strict";
+
+  var META = window.CLAUDE_META;
+  var SECTIONS = window.SECTIONS;
+  var COMMANDS = window.COMMANDS;
+  var DIFF = window.DIFFICULTY_LABELS;
+
+  var state = {
+    section: null,
+    sub: null,
+    query: "",
+    platform: localStorage.getItem("cmdclaude-platform") ||
+      (navigator.platform && navigator.platform.indexOf("Mac") !== -1 ? "mac" : "win")
+  };
+
+  /* ---------- utils ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function el(html) {
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    return t.content.firstChild;
+  }
+  function dots(level) {
+    var out = '<span class="dots" title="Difficulté ' + level + '/5">';
+    for (var i = 1; i <= 5; i++) {
+      out += '<span class="dot ' + (i <= level ? "on d" + level : "") + '"></span>';
+    }
+    return out + "</span>";
+  }
+  // Applique les surcharges Windows (entry.win) quand la plateforme est win.
+  function resolve(entry) {
+    if (state.platform === "win" && entry.win) {
+      var merged = {};
+      for (var k in entry) merged[k] = entry[k];
+      for (var w in entry.win) merged[w] = entry.win[w];
+      return merged;
+    }
+    return entry;
+  }
+  function sectionMeta(id) { return SECTIONS.filter(function (s) { return s.id === id; })[0]; }
+  function subLabel(sec, subId) {
+    if (!sec || !sec.subs) return null;
+    var s = sec.subs.filter(function (x) { return x.id === subId; })[0];
+    return s ? s.label : null;
+  }
+  function countFor(id) { return COMMANDS.filter(function (c) { return c.section === id; }).length; }
+
+  /* ---------- mockups SVG ---------- */
+  function clip(s, n) { s = String(s); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+  function wrap(s, n) {
+    var words = String(s).split(" "), out = [], line = "";
+    words.forEach(function (w) {
+      if ((line + " " + w).trim().length > n) { out.push(line.trim()); line = w; }
+      else line += " " + w;
+    });
+    if (line.trim()) out.push(line.trim());
+    return out;
+  }
+  function svg(w, h, parts) {
+    return '<svg viewBox="0 0 ' + w + " " + h + '" xmlns="http://www.w3.org/2000/svg" role="img">' + parts.join("") + "</svg>";
+  }
+  function trafficLights(y) {
+    return '<circle cx="18" cy="' + y + '" r="6" fill="#e0605a"/><circle cx="38" cy="' + y + '" r="6" fill="#e0b24e"/><circle cx="58" cy="' + y + '" r="6" fill="#7fae6e"/>';
+  }
+  function mono(x, y, txt, color, size) {
+    return '<text x="' + x + '" y="' + y + '" fill="' + color + '" font-family="ui-monospace, monospace" font-size="' + (size || 13.5) + '">' + esc(txt) + "</text>";
+  }
+  function sans(x, y, txt, color, size, weight, anchor) {
+    return '<text x="' + x + '" y="' + y + '" fill="' + color + '" font-family="ui-sans-serif, sans-serif" font-size="' + (size || 13) + '"' +
+      (weight ? ' font-weight="' + weight + '"' : "") + (anchor ? ' text-anchor="' + anchor + '"' : "") + ">" + esc(txt) + "</text>";
+  }
+
+  // Terminal réaliste : barre de titre, prompt, sortie, barre de statut (mode/modèle/contexte).
+  function terminalMockup(item) {
+    var W = 520, lh = 21, padX = 18, padTop = 56;
+    var lines = [];
+    lines.push({ t: "❯ " + (item.example || item.name), c: "#e8a87c" });
+    if (item.output) {
+      item.output.split("\n").forEach(function (l) {
+        lines.push({ t: l, c: l.indexOf("✔") === 0 || l.indexOf("✓") === 0 ? "#7fae6e" : "#a89c8c" });
+      });
+    } else {
+      lines.push({ t: "", c: "#a89c8c" });
+      wrap("› " + (item.oneLine || ""), 62).slice(0, 2).forEach(function (l) {
+        lines.push({ t: l, c: "#75695a" });
+      });
+    }
+    var bodyH = lines.length * lh;
+    var H = padTop + bodyH + 46;
+    var body = lines.map(function (l, i) {
+      return mono(padX, padTop + i * lh, clip(l.t, 62), l.c);
+    }).join("");
+    return svg(W, H, [
+      '<rect width="' + W + '" height="' + H + '" fill="#14110e"/>',
+      '<rect width="' + W + '" height="34" fill="#1f1a15"/>',
+      trafficLights(17),
+      mono(W / 2 - 60, 22, "claude — " + clip(item.name, 30), "#75695a", 12),
+      body,
+      // barre de statut
+      '<rect y="' + (H - 30) + '" width="' + W + '" height="30" fill="#1a1510"/>',
+      '<line x1="0" y1="' + (H - 30) + '" x2="' + W + '" y2="' + (H - 30) + '" stroke="#322b24"/>',
+      mono(padX, H - 11, "⏵⏵ accept edits", "#7fae6e", 11),
+      mono(W / 2 - 35, H - 11, "Opus 4.8", "#a89c8c", 11),
+      mono(W - 95, H - 11, "ctx 24% · 0.42$", "#75695a", 11)
+    ]);
+  }
+
+  // Fenêtre Chat : sidebar, bulle utilisateur, réponse Claude, barre de saisie.
+  function chatMockup(item) {
+    var W = 520, H = 300;
+    var ex = clip(item.example || item.oneLine || "", 44);
+    var replyLines = wrap(item.oneLine || "", 42).slice(0, 2);
+    var reply = replyLines.map(function (l, i) {
+      return sans(150, 178 + i * 20, l, "#a89c8c", 13);
+    }).join("");
+    return svg(W, H, [
+      '<rect width="' + W + '" height="' + H + '" fill="#211d19"/>',
+      '<rect width="' + W + '" height="40" fill="#1a1714"/>',
+      trafficLights(20),
+      sans(W / 2, 25, "Claude — Chat", "#75695a", 12.5, null, "middle"),
+      // sidebar
+      '<rect y="40" width="120" height="' + (H - 40) + '" fill="#1c1813"/>',
+      sans(16, 66, "💬 Chat", "#e8a87c", 12, "600"),
+      sans(16, 92, "🤝 Cowork", "#75695a", 12),
+      sans(16, 118, "⌨ Code", "#75695a", 12),
+      '<rect x="16" y="136" width="88" height="1" fill="#322b24"/>',
+      '<rect x="16" y="150" width="88" height="12" rx="6" fill="#241f19"/>',
+      '<rect x="16" y="170" width="72" height="12" rx="6" fill="#241f19"/>',
+      // bulle utilisateur (droite)
+      '<rect x="' + (W - 30 - Math.min(360, ex.length * 7 + 26)) + '" y="58" width="' + Math.min(360, ex.length * 7 + 26) + '" height="32" rx="14" fill="#d97757" opacity="0.92"/>',
+      sans(W - 30 - Math.min(360, ex.length * 7 + 26) / 2 - Math.min(360, ex.length * 7 + 26) / 2 + 14, 78, ex, "#1a1714", 12.5, "600"),
+      // réponse Claude (gauche)
+      '<circle cx="160" cy="126" r="10" fill="#d97757"/>',
+      sans(160, 130, "✳", "#1a1714", 11, null, "middle"),
+      sans(180, 130, clip(item.name, 34), "#ede4d8", 13.5, "700"),
+      sans(150, 154, "Voici ce que je peux faire :", "#a89c8c", 13),
+      reply,
+      // barre de saisie
+      '<rect x="150" y="' + (H - 50) + '" width="' + (W - 180) + '" height="34" rx="10" fill="#14110e" stroke="#3a322a"/>',
+      sans(166, H - 28, "Demandez quelque chose à Claude…", "#75695a", 12.5),
+      '<circle cx="' + (W - 48) + '" cy="' + (H - 33) + '" r="13" fill="#d97757"/>',
+      sans(W - 48, H - 29, "↑", "#1a1714", 13, null, "middle")
+    ]);
+  }
+
+  // Fenêtre Cowork : objectif, checklist de progression, livrable.
+  function coworkMockup(item) {
+    var W = 520, H = 300;
+    var goal = clip(item.example || item.oneLine || "", 52);
+    return svg(W, H, [
+      '<rect width="' + W + '" height="' + H + '" fill="#211d19"/>',
+      '<rect width="' + W + '" height="40" fill="#1a1714"/>',
+      trafficLights(20),
+      sans(W / 2, 25, "Claude — Cowork", "#75695a", 12.5, null, "middle"),
+      // objectif
+      '<rect x="24" y="56" width="' + (W - 48) + '" height="40" rx="10" fill="#2e2720"/>',
+      sans(40, 74, "OBJECTIF", "#e8a87c", 9.5, "700"),
+      sans(40, 89, goal, "#ede4d8", 12.5, "600"),
+      // checklist
+      sans(28, 126, "Progression", "#75695a", 10.5, "700"),
+      sans(32, 150, "✓", "#7fae6e", 13, "700"), sans(52, 150, "Analyser les fichiers du dossier de travail", "#a89c8c", 12.5),
+      sans(32, 174, "✓", "#7fae6e", 13, "700"), sans(52, 174, "Structurer les données collectées", "#a89c8c", 12.5),
+      sans(32, 198, "▸", "#d97757", 13, "700"), sans(52, 198, "Génération du livrable en cours…", "#ede4d8", 12.5, "600"),
+      sans(32, 222, "○", "#75695a", 13), sans(52, 222, "Vérification finale & rangement", "#75695a", 12.5),
+      // barre de progression
+      '<rect x="28" y="240" width="' + (W - 56) + '" height="7" rx="4" fill="#14110e"/>',
+      '<rect x="28" y="240" width="' + Math.round((W - 56) * 0.62) + '" height="7" rx="4" fill="#d97757"/>',
+      // livrable
+      '<rect x="28" y="262" width="190" height="26" rx="8" fill="#1c2a1c" stroke="#3a4a3a"/>',
+      sans(42, 279, "📊 rapport-final.xlsx", "#7fae6e", 12, "600")
+    ]);
+  }
+
+  // Fenêtre Code : mini-terminal intégré + liste de sessions.
+  function codeMockup(item) {
+    var W = 520, H = 300;
+    return svg(W, H, [
+      '<rect width="' + W + '" height="' + H + '" fill="#211d19"/>',
+      '<rect width="' + W + '" height="40" fill="#1a1714"/>',
+      trafficLights(20),
+      sans(W / 2, 25, "Claude — Code", "#75695a", 12.5, null, "middle"),
+      // sidebar sessions
+      '<rect y="40" width="150" height="' + (H - 40) + '" fill="#1c1813"/>',
+      sans(16, 64, "SESSIONS", "#75695a", 9.5, "700"),
+      '<rect x="10" y="74" width="130" height="30" rx="8" fill="#2e2720"/>',
+      sans(20, 93, "● fix-auth-bug", "#e8a87c", 11.5, "600"),
+      sans(20, 124, "○ export-csv", "#75695a", 11.5),
+      sans(20, 150, "○ refacto-api", "#75695a", 11.5),
+      // panneau principal : mini terminal
+      '<rect x="166" y="56" width="' + (W - 190) + '" height="170" rx="10" fill="#14110e" stroke="#322b24"/>',
+      mono(182, 84, "❯ " + clip(item.example || item.name, 38), "#e8a87c", 12),
+      mono(182, 108, "✔ Plan approuvé (3 étapes)", "#7fae6e", 12),
+      mono(182, 130, "~ src/auth/token.ts  +12 −4", "#e0b24e", 12),
+      mono(182, 152, "~ src/auth/index.ts  +3 −1", "#e0b24e", 12),
+      mono(182, 174, "✔ Tests : 24 passed", "#7fae6e", 12),
+      mono(182, 200, clip("› " + (item.oneLine || ""), 42), "#75695a", 11.5),
+      // boutons d'action
+      '<rect x="166" y="240" width="110" height="30" rx="9" fill="#d97757"/>',
+      sans(221, 259, "Accepter", "#1a1714", 12.5, "700", "middle"),
+      '<rect x="286" y="240" width="100" height="30" rx="9" fill="#2e2720" stroke="#3a322a"/>',
+      sans(336, 259, "Voir le diff", "#a89c8c", 12.5, null, "middle")
+    ]);
+  }
+
+  function mockupFor(item) {
+    var m = item.mockup;
+    if (!m && item.section === "app") m = item.sub === "cowork" ? "cowork" : item.sub === "code" ? "code" : "chat";
+    if (m === "chat") return chatMockup(item);
+    if (m === "cowork") return coworkMockup(item);
+    if (m === "code") return codeMockup(item);
+    return terminalMockup(item);
+  }
+
+  /* ---------- rendu ---------- */
+  function renderNav() {
+    var nav = document.getElementById("nav");
+    nav.innerHTML = "";
+    nav.appendChild(navItem({ id: null, label: "Tout", icon: "✳" }, COMMANDS.length));
+    SECTIONS.forEach(function (s) { nav.appendChild(navItem(s, countFor(s.id))); });
+  }
+  function navItem(s, n) {
+    var node = el(
+      '<div class="nav-item" data-sec="' + (s.id || "") + '">' +
+        '<span class="ic">' + esc(s.icon) + "</span>" +
+        "<span>" + esc(s.label) + "</span>" +
+        '<span class="ct">' + n + "</span>" +
+      "</div>"
+    );
+    node.addEventListener("click", function () { selectSection(s.id); });
+    return node;
+  }
+
+  function renderSectionCards() {
+    var wrapEl = document.getElementById("section-cards");
+    wrapEl.innerHTML = "";
+    SECTIONS.forEach(function (s) {
+      var subsTxt = s.subs ? s.subs.map(function (x) { return x.label; }).join(" · ") : null;
+      var node = el(
+        '<button class="section-card" data-sec="' + s.id + '">' +
+          '<div class="sc-ic">' + esc(s.icon) + "</div>" +
+          "<h3>" + esc(s.label) + "</h3>" +
+          "<p>" + esc(s.blurb) + "</p>" +
+          '<div class="sc-n">' + countFor(s.id) + " entrées" + (subsTxt ? " · " + esc(subsTxt) : "") + " →</div>" +
+        "</button>"
+      );
+      node.addEventListener("click", function () { selectSection(s.id); });
+      wrapEl.appendChild(node);
+    });
+  }
+
+  function renderSubChips() {
+    var box = document.getElementById("sub-chips");
+    var sec = state.section ? sectionMeta(state.section) : null;
+    if (!sec || !sec.subs || state.query) { box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    box.innerHTML = "";
+    var all = el('<button class="chip' + (!state.sub ? " active" : "") + '">Tout</button>');
+    all.addEventListener("click", function () { state.sub = null; render(); });
+    box.appendChild(all);
+    sec.subs.forEach(function (sb) {
+      var n = COMMANDS.filter(function (c) { return c.section === sec.id && c.sub === sb.id; }).length;
+      var chip = el('<button class="chip' + (state.sub === sb.id ? " active" : "") + '">' + esc(sb.label) + " · " + n + "</button>");
+      chip.addEventListener("click", function () { state.sub = sb.id; render(); });
+      box.appendChild(chip);
+    });
+  }
+
+  function visibleItems() {
+    var q = state.query.trim().toLowerCase();
+    return COMMANDS.filter(function (c) {
+      if (state.section && c.section !== state.section) return false;
+      if (state.sub && !state.query && c.sub !== state.sub) return false;
+      if (!q) return true;
+      var hay = c.name + " " + c.oneLine + " " + (c.simple || "") + " " + c.details + " " + (c.pro || "") + " " +
+        c.category + " " + (c.notes || "") + " " + (c.example || "") + " " + (c.win ? (c.win.name || "") : "");
+      return hay.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  function render() {
+    var items = visibleItems();
+    var grid = document.getElementById("grid");
+    var intro = document.getElementById("intro");
+    var head = document.getElementById("results-head");
+    var empty = document.getElementById("empty");
+
+    var showIntro = !state.section && !state.query;
+    intro.hidden = !showIntro;
+    head.hidden = showIntro;
+
+    if (!showIntro) {
+      var sm = state.section ? sectionMeta(state.section) : null;
+      document.getElementById("results-title").textContent =
+        state.query ? 'Résultats pour « ' + state.query + ' »' : sm.label;
+      document.getElementById("results-count").textContent = items.length + " entrée" + (items.length > 1 ? "s" : "");
+    }
+    renderSubChips();
+
+    grid.innerHTML = "";
+    empty.hidden = items.length !== 0;
+    items.forEach(function (raw) {
+      var c = resolve(raw);
+      var sec = sectionMeta(raw.section);
+      var sl = subLabel(sec, raw.sub);
+      var card = el(
+        '<div class="card" data-id="' + raw.id + '">' +
+          '<div class="card-top"><span class="card-name">' + esc(c.name) + "</span></div>" +
+          '<div class="card-cat">' + (sl ? esc(sl) + " · " : "") + esc(c.category) + "</div>" +
+          '<p class="card-desc">' + esc(c.oneLine) + "</p>" +
+          '<div class="card-foot">' + dots(c.difficulty) +
+            '<span class="diff-label">' + esc(DIFF[c.difficulty]) + "</span></div>" +
+        "</div>"
+      );
+      card.addEventListener("click", function () { openDetail(raw.id); });
+      grid.appendChild(card);
+    });
+
+    document.querySelectorAll(".nav-item").forEach(function (n) {
+      n.classList.toggle("active", (n.dataset.sec || null) === state.section);
+    });
+  }
+
+  function selectSection(id) {
+    state.section = id;
+    state.sub = null;
+    state.query = "";
+    document.getElementById("search").value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    render();
+  }
+
+  /* ---------- detail ---------- */
+  var currentDetailId = null;
+  function openDetail(id) {
+    var raw = COMMANDS.filter(function (x) { return x.id === id; })[0];
+    if (!raw) return;
+    currentDetailId = id;
+    var c = resolve(raw);
+    var sm = sectionMeta(raw.section);
+    var sl = subLabel(sm, raw.sub);
+    var platformHint = raw.win
+      ? '<p class="d-platform-hint">Affiché pour ' + (state.platform === "mac" ? "macOS — basculez sur Windows en haut de page pour la variante" : "Windows/Linux — basculez sur macOS en haut de page pour la variante") + ".</p>"
+      : "";
+    var body = document.getElementById("detail-body");
+    body.innerHTML =
+      '<div class="d-cat">' + esc(sm.label) + (sl ? " · " + esc(sl) : "") + " · " + esc(c.category) + "</div>" +
+      '<h2 class="d-name">' + esc(c.name) + "</h2>" +
+      '<p class="d-one">' + esc(c.oneLine) + "</p>" +
+      platformHint +
+      '<div class="d-meta">' +
+        '<div><div class="mlabel">Difficulté</div><div class="mval">' + dots(c.difficulty) + " " + esc(DIFF[c.difficulty]) + " (" + c.difficulty + "/5)</div></div>" +
+      "</div>" +
+      '<div class="d-mockup">' + mockupFor(c) + "</div>" +
+      (c.simple ? '<div class="d-block"><div class="d-simple"><span class="tag">💡 En clair</span>' + esc(c.simple) + "</div></div>" : "") +
+      '<div class="d-block"><h4>Comment ça marche</h4><p>' + esc(c.details) + "</p></div>" +
+      (c.example ? '<div class="d-block"><h4>Exemple</h4><div class="d-example">' + esc(c.example) + "</div></div>" : "") +
+      (c.pro ? '<div class="d-block"><div class="d-pro"><span class="tag">🚀 Pour aller plus loin</span>' + esc(c.pro) + "</div></div>" : "") +
+      (c.notes ? '<div class="d-block"><h4>À savoir</h4><p class="d-notes">' + esc(c.notes) + "</p></div>" : "");
+
+    var detailEl = document.getElementById("detail");
+    var overlayEl = document.getElementById("overlay");
+    if (detailHideTimer) { clearTimeout(detailHideTimer); detailHideTimer = null; }
+    detailEl.hidden = false;
+    overlayEl.hidden = false;
+    detailEl.setAttribute("aria-hidden", "false");
+    detailEl.scrollTop = 0;
+    void detailEl.offsetWidth; // reflow → l'animation d'entrée part bien de l'état fermé
+    detailEl.classList.add("is-open");
+    overlayEl.classList.add("is-open");
+    resetReport();
+  }
+  var detailHideTimer = null;
+  function closeDetail() {
+    currentDetailId = null;
+    closeReportPop();
+    var detailEl = document.getElementById("detail");
+    var overlayEl = document.getElementById("overlay");
+    detailEl.classList.remove("is-open");
+    overlayEl.classList.remove("is-open");
+    detailEl.setAttribute("aria-hidden", "true");
+    if (detailHideTimer) clearTimeout(detailHideTimer);
+    detailHideTimer = setTimeout(function () { // laisse l'animation de sortie se terminer
+      detailEl.hidden = true;
+      overlayEl.hidden = true;
+      detailHideTimer = null;
+    }, 440);
+  }
+
+  /* ---------- signalement (mailto) ---------- */
+  var REPORT_REASONS = [
+    "Ce n'est pas correct",
+    "Plus d'actualité",
+    "À mettre à jour / compléter",
+    "Autre (préciser ci-dessous)"
+  ];
+  var reportReason = null;
+
+  function renderReportReasons() {
+    var box = document.getElementById("rp-reasons");
+    box.innerHTML = "";
+    REPORT_REASONS.forEach(function (r) {
+      var b = el('<button type="button" class="rp-reason">' + esc(r) + "</button>");
+      b.addEventListener("click", function () {
+        reportReason = r;
+        document.querySelectorAll(".rp-reason").forEach(function (x) { x.classList.remove("sel"); });
+        b.classList.add("sel");
+        updateSendState();
+        if (isOtherReason()) document.getElementById("rp-note").focus();
+      });
+      box.appendChild(b);
+    });
+  }
+  function isOtherReason() { return !!reportReason && /Autre/.test(reportReason); }
+  function updateSendState() {
+    var note = document.getElementById("rp-note").value.trim();
+    var ok = !!reportReason && (!isOtherReason() || note.length > 0);
+    document.getElementById("rp-send").disabled = !ok;
+  }
+  function resetReport() {
+    reportReason = null;
+    closeReportPop();
+    var note = document.getElementById("rp-note");
+    if (note) note.value = "";
+    document.querySelectorAll(".rp-reason").forEach(function (x) { x.classList.remove("sel"); });
+    var done = document.getElementById("rp-done");
+    if (done) done.hidden = true;
+    updateSendState();
+  }
+  function openReportPop() {
+    if (!currentDetailId) return;
+    var c = COMMANDS.filter(function (x) { return x.id === currentDetailId; })[0];
+    document.getElementById("rp-sub").textContent = c ? "sur : " + c.name : "sur cette fiche";
+    document.getElementById("rp-done").hidden = true;
+    document.getElementById("report-pop").hidden = false;
+    document.getElementById("report-btn").classList.add("is-open");
+  }
+  function closeReportPop() {
+    var pop = document.getElementById("report-pop");
+    if (pop) pop.hidden = true;
+    var btn = document.getElementById("report-btn");
+    if (btn) btn.classList.remove("is-open");
+  }
+  function toggleReportPop() {
+    if (document.getElementById("report-pop").hidden) openReportPop(); else closeReportPop();
+  }
+  function sendReport() {
+    var c = COMMANDS.filter(function (x) { return x.id === currentDetailId; })[0];
+    if (!c || !reportReason) return;
+    var note = document.getElementById("rp-note").value.trim();
+    var reason = isOtherReason() ? (note || "Autre") : reportReason;
+    var precision = isOtherReason() ? "" : note;
+    var sm = sectionMeta(c.section);
+    var sl = subLabel(sm, c.sub);
+    var lines = [
+      "Fiche : " + c.name,
+      "Section : " + sm.label + (sl ? " › " + sl : "") + " · " + c.category,
+      "Réf. : " + c.id + "  (Claude Code " + META.version + ", doc " + META.updated + ")",
+      "",
+      "Problème signalé : " + reason,
+      "Précision : " + (precision || "—"),
+      "",
+      "— Envoyé depuis la documentation interactive des commandes Claude."
+    ];
+    var subject = "[Le Promptuaire] Signalement — " + c.name;
+    var href = "mailto:" + (META.feedbackEmail || "") +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(lines.join("\n"));
+    window.location.href = href;
+    document.getElementById("rp-done").hidden = false;
+  }
+
+  /* ---------- platform ---------- */
+  function setPlatform(os) {
+    state.platform = os;
+    localStorage.setItem("cmdclaude-platform", os);
+    document.querySelectorAll("#platform-toggle button").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.os === os);
+    });
+    render();
+    if (currentDetailId) openDetail(currentDetailId);
+  }
+
+  /* ---------- legend ---------- */
+  function renderLegend() {
+    var ul = document.getElementById("legend-list");
+    ul.innerHTML = "";
+    [1, 2, 3, 4, 5].forEach(function (lv) {
+      ul.appendChild(el("<li>" + dots(lv) + "<span>" + esc(DIFF[lv]) + "</span></li>"));
+    });
+  }
+
+  /* ---------- init ---------- */
+  function init() {
+    document.getElementById("meta-version").textContent = META.version;
+    document.getElementById("meta-version-2").textContent = META.version;
+    document.getElementById("meta-updated").textContent = META.updated;
+
+    renderNav();
+    renderSectionCards();
+    renderLegend();
+    render();
+    setPlatform(state.platform);
+
+    var search = document.getElementById("search");
+    search.addEventListener("input", function () {
+      state.query = search.value;
+      render();
+    });
+
+    document.querySelectorAll("#platform-toggle button").forEach(function (b) {
+      b.addEventListener("click", function () { setPlatform(b.dataset.os); });
+    });
+
+    document.getElementById("detail-close").addEventListener("click", closeDetail);
+    document.getElementById("overlay").addEventListener("click", closeDetail);
+
+    // Signalement
+    renderReportReasons();
+    document.querySelector(".detail-fab").addEventListener("click", function (e) { e.stopPropagation(); });
+    document.getElementById("report-btn").addEventListener("click", function (e) { e.stopPropagation(); toggleReportPop(); });
+    document.getElementById("rp-note").addEventListener("input", updateSendState);
+    document.getElementById("rp-send").addEventListener("click", sendReport);
+    document.getElementById("detail").addEventListener("click", closeReportPop);
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        if (!document.getElementById("report-pop").hidden) closeReportPop();
+        else closeDetail();
+      }
+      var inField = /^(INPUT|TEXTAREA)$/.test((document.activeElement || {}).tagName);
+      if (e.key === "/" && !inField) { e.preventDefault(); search.focus(); }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+  </script>
+</body>
+</html>
