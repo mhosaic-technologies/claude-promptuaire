@@ -59,7 +59,11 @@ body {
 .topbar h1 { font-size: 17px; margin: 0; letter-spacing: .2px; }
 .brand-sub { margin: 0; font-size: 12.5px; color: var(--muted); }
 .brand-credit { margin: 1px 0 0; font-size: 10px; color: var(--faint); letter-spacing: .4px; }
-.brand-credit b { font-weight: 600; color: var(--accent-2); opacity: .75; }
+.brand-credit a, .foot .credit a {
+  font-weight: 600; color: var(--accent-2); opacity: .75;
+  text-decoration: none; transition: opacity .14s;
+}
+.brand-credit a:hover, .foot .credit a:hover { opacity: 1; text-decoration: underline; }
 .search-wrap { position: relative; flex: 1; max-width: 480px; margin-left: auto; }
 .search-wrap input {
   width: 100%; padding: 11px 40px 11px 16px;
@@ -270,6 +274,7 @@ body {
 
 /* ---------- Bouton flottant « Signaler » (overlay du panneau de détail) ---------- */
 .detail-fab { position: fixed; right: 26px; bottom: 22px; z-index: 60; }
+.detail-fab[hidden] { display: none; }
 @media (max-width: 620px) { .detail-fab { right: 16px; bottom: 16px; } }
 .fab-btn {
   display: inline-flex; align-items: center; gap: 7px;
@@ -326,7 +331,6 @@ body {
   display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap;
   padding: 22px 34px; border-top: 1px solid var(--border-soft); color: var(--faint); font-size: 12px;
 }
-.foot .credit b { font-weight: 600; color: var(--accent-2); opacity: .8; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 880px) {
@@ -348,7 +352,7 @@ body {
       <div>
         <h1>Le Promptuaire</h1>
         <p class="brand-sub">Commandes Claude · Claude Code <span id="meta-version"></span></p>
-        <p class="brand-credit">Created by <b>Mhosaic</b> — Aurelien</p>
+        <p class="brand-credit">Created by <a href="https://www.mhosaic.com/fr" target="_blank" rel="noopener">Mhosaic</a> — Aurelien</p>
       </div>
     </div>
     <div class="platform-toggle" id="platform-toggle" title="Adapte les raccourcis clavier à votre système">
@@ -393,8 +397,10 @@ body {
     <button id="detail-close" class="detail-close" aria-label="Fermer">✕</button>
     <div id="detail-body"></div>
 
-    <!-- Bouton flottant de signalement (overlay bas-droite) -->
-    <div class="detail-fab">
+    <!-- Bouton flottant de signalement (overlay bas-droite).
+         Masqué temporairement (mailto peu fiable sans client mail configuré) :
+         retirer l'attribut hidden ci-dessous pour le réactiver. -->
+    <div class="detail-fab" hidden
       <div id="report-pop" class="report-pop" hidden>
         <div class="rp-title">Signaler un problème</div>
         <div class="rp-sub" id="rp-sub">sur cette fiche</div>
@@ -413,7 +419,7 @@ body {
 
   <footer class="foot">
     <span>Source : inspection locale de Claude Code <span class="mono" id="meta-version-2"></span> + documentation officielle · MàJ <span id="meta-updated"></span> · Maintenance : skills /maj-*</span>
-    <span class="credit">Created by <b>Mhosaic</b> — Aurelien</span>
+    <span class="credit">Created by <a href="https://www.mhosaic.com/fr" target="_blank" rel="noopener">Mhosaic</a> — Aurelien</span>
   </footer>
 
   <!-- Charge data.js. Sur http(s) (preview/serveur), ajoute un cache-buster pour toujours avoir la dernière version ; sur file:// (double-clic), charge le fichier tel quel. -->
