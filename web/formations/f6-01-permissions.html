@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 6.1 — Le modèle de permissions · Sécurité et gouvernance d'équipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F6F9; --card:#FFFFFF; --ink:#141D2C; --ink-soft:#4B586E;
+    --line:#DDE3EC;
+    --accent:#C0442E; --accent-soft:#F8E4E0; --accent-dark:#963322;
+    --amber:#E8952D; --amber-soft:#FCF1DF;
+    --term-bg:#0D1421; --term-line:#1C2942; --term-green:#7EE787; --term-blue:#79B8FF; --term-text:#C6D3E6; --term-dim:#5C6F8F; --term-yellow:#F2CC60;
+    --radius:14px;
+    --mod:#C0442E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.6;font-size:17px}
+  ::selection{background:var(--accent-soft)}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.15}
+  code,pre,.mono{font-family:'IBM Plex Mono',monospace}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(244,246,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1060px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .mod-pill{background:var(--mod);color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.8rem;letter-spacing:.08em;padding:5px 12px;border-radius:99px;white-space:nowrap}
+  .nav-title{font-family:'Space Grotesk';font-weight:700;font-size:1rem}
+  .nav-links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+  .nav-links a{color:var(--ink-soft);text-decoration:none;font-size:.82rem;font-weight:500;padding:6px 10px;border-radius:8px}
+  .nav-links a:hover,.nav-links a:focus-visible{background:var(--accent-soft);color:var(--accent-dark)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:'IBM Plex Mono';font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mod);font-weight:500;margin-bottom:12px}
+  h2{font-size:2rem;margin-bottom:8px}
+  .lead{color:var(--ink-soft);font-size:1.08rem;max-width:660px;margin-bottom:32px}
+
+  .hero{padding:72px 0 64px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.3rem,5vw,3.4rem);font-weight:700;margin:14px 0 18px}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{color:var(--ink-soft);font-size:1.12rem;max-width:480px}
+  .hero-meta{display:flex;gap:18px;margin-top:28px;font-size:.86rem;color:var(--ink-soft)}
+  .hero-meta span{display:flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--mod);display:inline-block}
+
+  .term{background:var(--term-bg);border-radius:var(--radius);box-shadow:0 24px 60px -24px rgba(13,20,33,.55);overflow:hidden;border:1px solid var(--term-line)}
+  .term-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:#111B2E;border-bottom:1px solid var(--term-line)}
+  .term-bar i{width:11px;height:11px;border-radius:50%;display:block}
+  .term-bar i:nth-child(1){background:#FF5F57}.term-bar i:nth-child(2){background:#FEBC2E}.term-bar i:nth-child(3){background:#28C840}
+  .term-bar span{margin-left:8px;color:var(--term-dim);font-family:'IBM Plex Mono';font-size:.74rem}
+  .term-body{padding:18px 20px;font-family:'IBM Plex Mono';font-size:.86rem;color:var(--term-text);line-height:1.75}
+  .p1{color:var(--term-green)} .p2{color:var(--term-blue)} .cm{color:var(--term-dim)} .yl{color:var(--term-yellow)}
+  .cursor{display:inline-block;width:9px;height:1.1em;background:var(--term-green);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){.cursor{animation:none}}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .card h3{font-size:1.05rem;margin-bottom:8px}
+  .card p{color:var(--ink-soft);font-size:.95rem}
+  .card .ic{font-size:1.5rem;margin-bottom:10px;display:block}
+  .card code{background:var(--accent-soft);color:var(--accent-dark);border-radius:6px;padding:1px 6px;font-size:.85em}
+
+  .demo{background:var(--amber-soft);border:2px dashed var(--amber);border-radius:var(--radius);padding:26px 28px;display:flex;gap:20px;align-items:flex-start;margin:40px 0 0}
+  .demo .badge{background:var(--amber);color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.78rem;letter-spacing:.06em;padding:6px 12px;border-radius:8px;white-space:nowrap}
+  .demo h3{font-size:1.1rem;margin-bottom:6px}
+  .demo ol{margin:8px 0 0 18px;color:var(--ink-soft);font-size:.95rem}
+  .demo li{margin-bottom:4px}
+  .demo code{background:#fff;border:1px solid #EAD9BC;border-radius:6px;padding:1px 7px;font-size:.85em}
+
+  /* Anatomie */
+  .anatomy{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  .file{background:var(--term-bg);border-radius:var(--radius);border:1px solid var(--term-line);overflow:hidden}
+  .file-name{padding:10px 16px;background:#111B2E;border-bottom:1px solid var(--term-line);color:var(--term-blue);font-family:'IBM Plex Mono';font-size:.8rem}
+  .file pre{padding:18px 20px;font-size:.8rem;line-height:1.7;color:var(--term-text);overflow-x:auto}
+  .file .h{color:var(--term-green)} .file .d{color:var(--term-dim)} .file .y{color:var(--term-yellow)}
+  .legend{display:flex;flex-direction:column;gap:14px}
+  .legend-item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px}
+  .legend-item.hot{border-left-color:var(--amber);background:#FFFDF8}
+  .legend-item strong{font-family:'Space Grotesk';font-size:.95rem;display:block;margin-bottom:3px}
+  .legend-item p{font-size:.88rem;color:var(--ink-soft)}
+  .tag{display:inline-block;font-family:'IBM Plex Mono';font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;background:var(--amber);color:#fff;border-radius:5px;padding:2px 7px;margin-left:8px;vertical-align:middle}
+
+  /* Tableau de référence */
+  .cmd-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+  .cmd-table th{font-family:'Space Grotesk';font-size:.85rem;text-align:left;padding:14px 20px;background:var(--ink);color:#fff}
+  .cmd-table td{padding:13px 20px;border-top:1px solid var(--line);font-size:.93rem;color:var(--ink-soft);vertical-align:top}
+  .cmd-table td:first-child{white-space:nowrap}
+  .cmd-table code{background:var(--accent-soft);color:var(--accent-dark);border-radius:6px;padding:2px 8px;font-size:.85rem;font-weight:500}
+  .cmd-table tr:hover td{background:#FAFBFD}
+
+  /* Étages / hiérarchie */
+  .tiers{display:flex;flex-direction:column;max-width:680px}
+  .tier{display:flex;gap:18px;align-items:flex-start;padding:18px 0;border-bottom:1px dashed var(--line)}
+  .tier:last-child{border:none}
+  .tier code{background:var(--accent-soft);color:var(--accent-dark);padding:3px 10px;border-radius:8px;font-size:.82rem;white-space:nowrap}
+  .tier div p{font-size:.93rem;color:var(--ink-soft)}
+  .tier div strong{font-family:'Space Grotesk';font-size:.98rem}
+
+  /* Note */
+  .note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:28px;max-width:820px}
+  .note strong{font-family:'Space Grotesk'}
+  .note p{font-size:.94rem;color:var(--ink-soft);margin-top:4px}
+  .note code{background:var(--accent-soft);color:var(--accent-dark);border-radius:5px;padding:1px 6px;font-size:.85em}
+
+  .keys{background:var(--ink);color:#EDF1F8;border-radius:var(--radius);padding:36px 40px}
+  .keys h2{color:#fff}
+  .keys ol{counter-reset:k;list-style:none;margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px 32px}
+  .keys li{counter-increment:k;padding-left:44px;position:relative;font-size:.98rem;color:#C4CEDF}
+  .keys li strong{color:#fff}
+  .keys li::before{content:counter(k,decimal-leading-zero);position:absolute;left:0;top:2px;font-family:'IBM Plex Mono';color:var(--term-green);font-size:.85rem}
+
+  footer{padding:40px 0 64px}
+  .next{display:flex;justify-content:space-between;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 28px;flex-wrap:wrap}
+  .next a{font-family:'Space Grotesk';font-weight:700;color:var(--accent-dark);text-decoration:none;font-size:1.02rem}
+  .next a:hover{text-decoration:underline}
+  .next small{color:var(--ink-soft)}
+
+  @media(max-width:820px){
+    .hero,.grid2,.grid3,.anatomy{grid-template-columns:1fr}
+    .keys ol{grid-template-columns:1fr}
+    section{padding:48px 0}
+    .nav-links{display:none}
+    .cmd-table td,.cmd-table th{padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="mod-pill">MODULE 1 / 2</span>
+    <span class="nav-title">Le modèle de permissions</span>
+    <div class="nav-links">
+      <a href="#defaut">Par défaut</a>
+      <a href="#listes">Les trois listes</a>
+      <a href="#portees">Les portées</a>
+      <a href="#anatomie">Anatomie</a>
+      <a href="#hooks">Les hooks</a>
+      <a href="#retenir">À retenir</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Sécurité et gouvernance · Module 6.1</p>
+      <h1>Le modèle de permissions : garder le <em>contrôle</em> sans freiner l'équipe</h1>
+      <p>Claude Code est puissant parce qu'il agit — il modifie des fichiers, lance des commandes. La bonne nouvelle : chacun de ces gestes passe par un système de permissions qu'on peut ouvrir, resserrer ou verrouiller, poste par poste ou pour toute l'organisation.</p>
+      <div class="hero-meta">
+        <span><i class="dot"></i>~40 minutes</span>
+        <span><i class="dot"></i>Prérequis : formation F0</span>
+      </div>
+    </div>
+    <div class="term" aria-label="Aperçu du terminal : Claude demande une permission">
+      <div class="term-bar"><i></i><i></i><i></i><span>projet-web — claude</span></div>
+      <div class="term-body">
+        <span class="p1">&gt;</span> Nettoie le dossier de build<br><br>
+        <span class="cm">⏺</span> Bash(<span class="yl">rm -rf dist/</span>)<br><br>
+        <span class="cm">✻ Cette commande exige votre accord :</span><br>
+        &nbsp;&nbsp;<span class="p1">❯ 1.</span> Autoriser une fois<br>
+        &nbsp;&nbsp;<span class="cm">2. Toujours autoriser &nbsp;3. Refuser</span><span class="cursor"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAR DÉFAUT -->
+  <section id="defaut">
+    <p class="eyebrow">Le comportement de base</p>
+    <h2>Prudent par défaut : lire librement, agir sur approbation</h2>
+    <p class="lead">Pensez à un consultant externe en première semaine : il peut consulter le dossier autant qu'il veut, mais rien ne change et rien ne sort sans votre signature. C'est exactement la posture de Claude Code à l'installation.</p>
+    <div class="grid3">
+      <div class="card">
+        <span class="ic">👀</span>
+        <h3>Lire, sans demander</h3>
+        <p>Explorer les fichiers du projet, chercher dans le code, comprendre l'architecture. La lecture seule ne modifie rien : elle est permise d'emblée.</p>
+      </div>
+      <div class="card">
+        <span class="ic">✋</span>
+        <h3>Agir, avec votre accord</h3>
+        <p>Modifier un fichier, lancer une commande, consulter le web : Claude s'arrête et demande. Vous voyez le geste exact avant qu'il se produise.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🧱</span>
+        <h3>Verrouiller, si on veut</h3>
+        <p>Certaines actions peuvent être interdites d'avance : plus de question, un refus net. C'est la partie qui intéresse la gouvernance.</p>
+      </div>
+    </div>
+    <div class="note">
+      <strong>D'où viennent les « Toujours autoriser » ?</strong>
+      <p>Chaque fois que quelqu'un répond « ne plus me demander », la règle s'écrit dans un fichier <code>settings.json</code>. Sans encadrement, la politique de sécurité de l'équipe se construit donc toute seule, un clic à la fois. Ce module sert justement à reprendre la main sur ces fichiers.</p>
+    </div>
+  </section>
+
+  <!-- LES TROIS LISTES -->
+  <section id="listes">
+    <p class="eyebrow">Le mécanisme</p>
+    <h2>Trois listes qui décident à votre place</h2>
+    <p class="lead">Le modèle fonctionne comme un trousseau de clés qu'on remet à Claude : <strong>allow</strong> pour les clés confiées, <strong>ask</strong> pour les portes à double vérification, <strong>deny</strong> pour les portes condamnées. Chaque règle nomme un outil et, au besoin, un motif précis.</p>
+    <div class="grid3" style="margin-bottom:32px">
+      <div class="card">
+        <span class="ic">✅</span>
+        <h3>allow</h3>
+        <p>Les actions exécutées sans interruption. On y met les gestes fréquents et sans danger — jamais des accès larges « pour aller plus vite ».</p>
+      </div>
+      <div class="card">
+        <span class="ic">🔔</span>
+        <h3>ask</h3>
+        <p>Claude peut le faire, mais chaque occurrence exige un oui explicite. Idéal pour les gestes lourds de conséquences, comme pousser du code.</p>
+      </div>
+      <div class="card" style="border-color:var(--accent);border-width:2px">
+        <span class="ic">⛔</span>
+        <h3>deny</h3>
+        <p>Refus automatique, sans question posée. Un <code>deny</code> l'emporte sur tout <code>allow</code>, peu importe où il est déclaré.</p>
+      </div>
+    </div>
+    <table class="cmd-table">
+      <thead>
+        <tr><th>Exemple de règle</th><th>Ce qu'elle couvre</th><th>Liste conseillée</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>Bash(npm run test:*)</code></td><td>Les scripts de test du projet — et rien d'autre. Le motif après la parenthèse restreint la commande.</td><td>allow</td></tr>
+        <tr><td><code>WebFetch(domain:docs.anthropic.com)</code></td><td>La consultation web, mais limitée à ce domaine.</td><td>allow</td></tr>
+        <tr><td><code>Bash(git push:*)</code></td><td>Pousser vers le dépôt distant : possible, mais confirmé à chaque fois.</td><td>ask</td></tr>
+        <tr><td><code>Read(./.env)</code></td><td>La lecture du fichier de secrets du projet. Claude n'y touchera jamais.</td><td>deny</td></tr>
+        <tr><td><code>Bash(curl:*)</code></td><td>Toute commande <span class="mono">curl</span> — une façon de couper les envois réseau improvisés.</td><td>deny</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <strong>L'ordre de préséance est fixe : deny &gt; ask &gt; allow.</strong>
+      <p>Impossible de contourner un interdit en ajoutant une autorisation plus loin. C'est ce qui rend le modèle prévisible — et auditable : la commande <code>/permissions</code> affiche en tout temps les règles actives et leur provenance.</p>
+    </div>
+  </section>
+
+  <!-- LES PORTÉES -->
+  <section id="portees">
+    <p class="eyebrow">La gouvernance</p>
+    <h2>Qui décide ? Trois étages, et l'organisation a le dernier mot</h2>
+    <p class="lead">Les mêmes règles peuvent être posées à trois niveaux, comme les règlements d'un immeuble : le locataire décore son logement, la copropriété fixe les règles communes, et le code du bâtiment s'impose à tout le monde.</p>
+    <div class="tiers">
+      <div class="tier">
+        <code>managed-settings.json</code>
+        <div>
+          <strong>Organisation — non négociable</strong>
+          <p>Déployé par la TI sur les postes (hors du dossier de l'utilisateur). Les règles qu'il contient ne peuvent être contournées par personne : c'est l'outil de conformité de l'entreprise.</p>
+        </div>
+      </div>
+      <div class="tier">
+        <code>.claude/settings.json</code>
+        <div>
+          <strong>Projet — versionné et partagé</strong>
+          <p>Commité dans le dépôt, donc revu en merge request comme du code. C'est ici que vit la politique de l'équipe : quiconque clone le projet en hérite automatiquement.</p>
+        </div>
+      </div>
+      <div class="tier">
+        <code>.claude/settings.local.json</code>
+        <div>
+          <strong>Projet — personnel, non versionné</strong>
+          <p>Ignoré par git. C'est là que s'accumulent les « toujours autoriser » individuels — pratique, mais invisible pour l'équipe : à surveiller.</p>
+        </div>
+      </div>
+      <div class="tier">
+        <code>~/.claude/settings.json</code>
+        <div>
+          <strong>Utilisateur — valable partout</strong>
+          <p>Les préférences personnelles qui suivent la personne dans tous ses projets. Utile pour ses propres garde-fous, sans effet sur les collègues.</p>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>En cas de conflit, l'étage le plus haut gagne.</strong>
+      <p>Les réglages d'organisation priment sur ceux du projet, qui priment sur ceux de l'utilisateur. Et rappel : un <code>deny</code> posé à n'importe quel étage bloque, même si un <code>allow</code> existe ailleurs.</p>
+    </div>
+  </section>
+
+  <!-- ANATOMIE -->
+  <section id="anatomie">
+    <p class="eyebrow">Sous le capot</p>
+    <h2>Toute la politique de l'équipe tient dans un fichier</h2>
+    <p class="lead">Voici un <span class="mono">.claude/settings.json</span> de projet réaliste : les tests roulent sans friction, les gestes irréversibles se confirment, les secrets sont hors d'atteinte.</p>
+    <div class="anatomy">
+      <div class="file">
+        <div class="file-name">.claude/settings.json</div>
+        <pre><span class="d">{</span>
+  <span class="y">"permissions"</span><span class="d">: {</span>
+    <span class="y">"allow"</span><span class="d">: [</span>
+      <span class="h">"Bash(npm run test:*)"</span><span class="d">,</span>
+      <span class="h">"Bash(npm run lint)"</span><span class="d">,</span>
+      <span class="h">"WebFetch(domain:docs.anthropic.com)"</span>
+    <span class="d">],</span>
+    <span class="y">"ask"</span><span class="d">: [</span>
+      <span class="h">"Bash(git push:*)"</span>
+    <span class="d">],</span>
+    <span class="y">"deny"</span><span class="d">: [</span>
+      <span class="h">"Read(./.env)"</span><span class="d">,</span>
+      <span class="h">"Read(./secrets/**)"</span><span class="d">,</span>
+      <span class="h">"Bash(curl:*)"</span>
+    <span class="d">]</span>
+  <span class="d">}</span>
+<span class="d">}</span></pre>
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <strong>allow — les clés confiées</strong>
+          <p>Des motifs précis (<span class="mono">npm run test:*</span>), jamais un outil au complet. On autorise des gestes connus, pas des catégories entières.</p>
+        </div>
+        <div class="legend-item">
+          <strong>ask — la double vérification</strong>
+          <p>Pousser du code reste possible, mais chaque <span class="mono">git push</span> exige un oui explicite. Le réflexe pour tout geste difficile à annuler.</p>
+        </div>
+        <div class="legend-item hot">
+          <strong>deny <span class="tag">Gagne toujours</span></strong>
+          <p>Refus net, sans question : les secrets (<span class="mono">.env</span>, dossier <span class="mono">secrets/</span>) et les envois réseau improvisés sont hors jeu, peu importe ce que les autres listes permettent.</p>
+        </div>
+        <div class="legend-item">
+          <strong>Un fichier versionné = une politique revue</strong>
+          <p>Ce fichier vit dans le dépôt : chaque changement passe en revue de code, chaque poste qui clone le projet hérite des mêmes règles. La gouvernance devient traçable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <span class="badge">🎬 DÉMO LIVE</span>
+      <div>
+        <h3>Des permissions restrictives en action</h3>
+        <ol>
+          <li>Ouvrir <code>/permissions</code> dans une session Claude Code : montrer les règles actives et l'étage d'où vient chacune.</li>
+          <li>Ajouter <code>Read(./.env)</code> à la liste <code>deny</code> du <code>.claude/settings.json</code> du projet.</li>
+          <li>Demander « affiche la configuration de la base de données » — observer le refus immédiat, sans même une question.</li>
+          <li>Ajouter <code>Bash(npm run test:*)</code> en <code>allow</code>, relancer les tests et constater qu'ils roulent maintenant sans interruption.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOOKS -->
+  <section id="hooks">
+    <p class="eyebrow">Rappel de F2, angle gouvernance</p>
+    <h2>Les hooks : des garde-fous qui s'exécutent tout seuls</h2>
+    <p class="lead">Les listes filtrent par nom d'outil et par motif. Pour une politique plus fine, les hooks — vus en F2 — prennent le relais : de vrais scripts déclenchés autour de chaque action de Claude. Une consigne écrite peut s'oublier ; un hook, comme un détecteur de fumée, ne dort jamais.</p>
+    <div class="grid2">
+      <div class="card">
+        <span class="ic">🚦</span>
+        <h3>Bloquer avant le geste</h3>
+        <p>Un hook <code>PreToolUse</code> examine chaque action avant son exécution et peut la refuser selon vos propres critères : commande qui touche la production, fichier hors périmètre, mot de passe détecté dans le texte.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🧾</span>
+        <h3>Tracer pour auditer</h3>
+        <p>Un hook peut journaliser chaque commande exécutée : qui, quoi, quand, dans quel projet. Le jour où la conformité pose des questions, la réponse existe déjà.</p>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Permissions et hooks se complètent — et se versionnent ensemble.</strong>
+      <p>Les listes couvrent 90 % des besoins avec zéro code ; les hooks appliquent les règles que les listes ne savent pas exprimer. Déclarés dans le même <code>.claude/settings.json</code>, ils voyagent avec le projet et s'imposent à toute l'équipe.</p>
+    </div>
+  </section>
+
+  <!-- RETENIR -->
+  <section id="retenir" style="border:none">
+    <div class="keys">
+      <p class="eyebrow" style="color:var(--term-green)">L'essentiel</p>
+      <h2>À retenir du module 6.1</h2>
+      <ol>
+        <li><strong>Lecture libre, action sous accord.</strong> Par défaut, Claude explore le projet mais ne modifie rien sans votre approbation explicite.</li>
+        <li><strong>Trois listes : allow, ask, deny.</strong> Et la préséance est fixe — un deny l'emporte toujours, peu importe où il est déclaré.</li>
+        <li><strong>La portée fait la gouvernance.</strong> Utilisateur, projet versionné, organisation : les réglages déployés par la TI ont le dernier mot.</li>
+        <li><strong>Les hooks appliquent sans exception.</strong> Une consigne s'oublie ; un script versionné bloque et journalise à tout coup.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    <div class="next">
+      <a href="f5-02-cicd.html" style="color:var(--ink-soft);font-weight:500">← F5 Module 2 — Intégration CI/CD</a>
+      <a href="f6-02-politique-equipe.html">Module 6.2 — La politique d'équipe →</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

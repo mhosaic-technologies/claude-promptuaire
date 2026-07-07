@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 6.2 — La politique d'équipe · Sécurité et gouvernance d'équipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F6F9; --card:#FFFFFF; --ink:#141D2C; --ink-soft:#4B586E;
+    --line:#DDE3EC;
+    --accent:#C0442E; --accent-soft:#F8E4E0; --accent-dark:#963322;
+    --amber:#E8952D; --amber-soft:#FCF1DF;
+    --term-bg:#0D1421; --term-line:#1C2942; --term-green:#7EE787; --term-blue:#79B8FF; --term-text:#C6D3E6; --term-dim:#5C6F8F; --term-yellow:#F2CC60;
+    --radius:14px;
+    --mod:#C0442E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.6;font-size:17px}
+  ::selection{background:var(--accent-soft)}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.15}
+  code,pre,.mono{font-family:'IBM Plex Mono',monospace}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(244,246,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1060px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .mod-pill{background:var(--mod);color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.8rem;letter-spacing:.08em;padding:5px 12px;border-radius:99px;white-space:nowrap}
+  .nav-title{font-family:'Space Grotesk';font-weight:700;font-size:1rem}
+  .nav-links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+  .nav-links a{color:var(--ink-soft);text-decoration:none;font-size:.82rem;font-weight:500;padding:6px 10px;border-radius:8px}
+  .nav-links a:hover,.nav-links a:focus-visible{background:var(--accent-soft);color:var(--accent-dark)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:'IBM Plex Mono';font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mod);font-weight:500;margin-bottom:12px}
+  h2{font-size:2rem;margin-bottom:8px}
+  .lead{color:var(--ink-soft);font-size:1.08rem;max-width:660px;margin-bottom:32px}
+
+  .hero{padding:72px 0 64px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.3rem,5vw,3.4rem);font-weight:700;margin:14px 0 18px}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{color:var(--ink-soft);font-size:1.12rem;max-width:480px}
+  .hero-meta{display:flex;gap:18px;margin-top:28px;font-size:.86rem;color:var(--ink-soft)}
+  .hero-meta span{display:flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--mod);display:inline-block}
+
+  .term{background:var(--term-bg);border-radius:var(--radius);box-shadow:0 24px 60px -24px rgba(13,20,33,.55);overflow:hidden;border:1px solid var(--term-line)}
+  .term-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:#111B2E;border-bottom:1px solid var(--term-line)}
+  .term-bar i{width:11px;height:11px;border-radius:50%;display:block}
+  .term-bar i:nth-child(1){background:#FF5F57}.term-bar i:nth-child(2){background:#FEBC2E}.term-bar i:nth-child(3){background:#28C840}
+  .term-bar span{margin-left:8px;color:var(--term-dim);font-family:'IBM Plex Mono';font-size:.74rem}
+  .term-body{padding:18px 20px;font-family:'IBM Plex Mono';font-size:.86rem;color:var(--term-text);line-height:1.75}
+  .p1{color:var(--term-green)} .p2{color:var(--term-blue)} .cm{color:var(--term-dim)} .yl{color:var(--term-yellow)}
+  .cursor{display:inline-block;width:9px;height:1.1em;background:var(--term-green);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){.cursor{animation:none}}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .card h3{font-size:1.05rem;margin-bottom:8px}
+  .card p{color:var(--ink-soft);font-size:.95rem}
+  .card .ic{font-size:1.5rem;margin-bottom:10px;display:block}
+  .card code{background:var(--accent-soft);color:var(--accent-dark);border-radius:6px;padding:1px 6px;font-size:.85em}
+
+  .demo{background:var(--amber-soft);border:2px dashed var(--amber);border-radius:var(--radius);padding:26px 28px;display:flex;gap:20px;align-items:flex-start;margin:40px 0 0}
+  .demo .badge{background:var(--amber);color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.78rem;letter-spacing:.06em;padding:6px 12px;border-radius:8px;white-space:nowrap}
+  .demo h3{font-size:1.1rem;margin-bottom:6px}
+  .demo ol{margin:8px 0 0 18px;color:var(--ink-soft);font-size:.95rem}
+  .demo li{margin-bottom:4px}
+  .demo code{background:#fff;border:1px solid #EAD9BC;border-radius:6px;padding:1px 7px;font-size:.85em}
+
+  /* Do / Don't */
+  .dd{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .do,.dont{border-radius:var(--radius);padding:24px}
+  .do{background:#EDF8F1;border:1px solid #C4E8D1}
+  .dont{background:#FBEFEF;border:1px solid #F0CFCF}
+  .do h3{color:#177245}.dont h3{color:#B03A3A}
+  .do ul,.dont ul{margin:12px 0 0 4px;list-style:none}
+  .do li,.dont li{padding:7px 0 7px 28px;position:relative;font-size:.95rem;color:var(--ink-soft);border-bottom:1px dashed rgba(0,0,0,.07)}
+  .do li:last-child,.dont li:last-child{border:none}
+  .do li::before{content:"✓";position:absolute;left:2px;color:#177245;font-weight:700}
+  .dont li::before{content:"✕";position:absolute;left:2px;color:#B03A3A;font-weight:700}
+
+  /* Tableau de référence */
+  .cmd-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+  .cmd-table th{font-family:'Space Grotesk';font-size:.85rem;text-align:left;padding:14px 20px;background:var(--ink);color:#fff}
+  .cmd-table td{padding:13px 20px;border-top:1px solid var(--line);font-size:.93rem;color:var(--ink-soft);vertical-align:top}
+  .cmd-table td:first-child{white-space:nowrap}
+  .cmd-table code{background:var(--accent-soft);color:var(--accent-dark);border-radius:6px;padding:2px 8px;font-size:.85rem;font-weight:500}
+  .cmd-table tr:hover td{background:#FAFBFD}
+
+  /* Étages / rôles */
+  .tiers{display:flex;flex-direction:column;max-width:680px}
+  .tier{display:flex;gap:18px;align-items:flex-start;padding:18px 0;border-bottom:1px dashed var(--line)}
+  .tier:last-child{border:none}
+  .tier code{background:var(--accent-soft);color:var(--accent-dark);padding:3px 10px;border-radius:8px;font-size:.82rem;white-space:nowrap}
+  .tier div p{font-size:.93rem;color:var(--ink-soft)}
+  .tier div strong{font-family:'Space Grotesk';font-size:.98rem}
+
+  /* Étapes numérotées */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;counter-increment:s}
+  .step::before{content:counter(s,decimal-leading-zero);font-family:'IBM Plex Mono';color:var(--accent);font-size:.8rem;display:block;margin-bottom:10px}
+  .step h3{font-size:.98rem;margin-bottom:6px}
+  .step p{font-size:.86rem;color:var(--ink-soft)}
+
+  /* Note */
+  .note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:28px;max-width:820px}
+  .note strong{font-family:'Space Grotesk'}
+  .note p{font-size:.94rem;color:var(--ink-soft);margin-top:4px}
+  .note code{background:var(--accent-soft);color:var(--accent-dark);border-radius:5px;padding:1px 6px;font-size:.85em}
+
+  .keys{background:var(--ink);color:#EDF1F8;border-radius:var(--radius);padding:36px 40px}
+  .keys h2{color:#fff}
+  .keys ol{counter-reset:k;list-style:none;margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px 32px}
+  .keys li{counter-increment:k;padding-left:44px;position:relative;font-size:.98rem;color:#C4CEDF}
+  .keys li strong{color:#fff}
+  .keys li::before{content:counter(k,decimal-leading-zero);position:absolute;left:0;top:2px;font-family:'IBM Plex Mono';color:var(--term-green);font-size:.85rem}
+
+  footer{padding:40px 0 64px}
+  .next{display:flex;justify-content:space-between;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 28px;flex-wrap:wrap}
+  .next a{font-family:'Space Grotesk';font-weight:700;color:var(--accent-dark);text-decoration:none;font-size:1.02rem}
+  .next a:hover{text-decoration:underline}
+  .next small{color:var(--ink-soft)}
+  .next .end{text-align:right}
+  .next .end strong{font-family:'Space Grotesk';font-size:1.02rem;display:block;margin-bottom:2px}
+  .next .end small a{font-size:.85rem;font-weight:600}
+
+  @media(max-width:820px){
+    .hero,.grid3,.dd{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .keys ol{grid-template-columns:1fr}
+    section{padding:48px 0}
+    .nav-links{display:none}
+    .cmd-table td,.cmd-table th{padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="mod-pill">MODULE 2 / 2</span>
+    <span class="nav-title">La politique d'équipe</span>
+    <div class="nav-links">
+      <a href="#jamais">Jamais versionner</a>
+      <a href="#reviser">Réviser</a>
+      <a href="#standardiser">Standardiser</a>
+      <a href="#donnees">Les données</a>
+      <a href="#charte">La charte</a>
+      <a href="#retenir">À retenir</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Sécurité et gouvernance · Module 6.2</p>
+      <h1>La politique d'équipe : encadrer l'usage sans le <em>freiner</em></h1>
+      <p>Le module 6.1 a donné les verrous techniques. Reste le plus important : les règles humaines. Quoi versionner, quoi interdire, quoi réviser avant d'installer — et comment en faire une charte que l'équipe applique parce qu'elle l'a écrite avec vous.</p>
+      <div class="hero-meta">
+        <span><i class="dot"></i>~40 minutes</span>
+        <span><i class="dot"></i>Suite du module 6.1</span>
+      </div>
+    </div>
+    <div class="term" aria-label="Aperçu du terminal : révision d'un plugin tiers">
+      <div class="term-bar"><i></i><i></i><i></i><span>equipe — claude</span></div>
+      <div class="term-body">
+        <span class="p1">&gt;</span> Passe en revue ce plugin avant<br>&nbsp;&nbsp;qu'on l'installe pour l'équipe<br><br>
+        <span class="cm">⏺ Lecture de <span class="p2">.claude-plugin/plugin.json</span>…</span><br>
+        <span class="cm">⏺ 3 commandes, 1 hook, 1 serveur MCP</span><br><br>
+        <span class="cm">✻ Point de vigilance : le hook envoie</span><br>
+        <span class="cm">&nbsp;&nbsp;des données vers un <span class="yl">domaine externe</span></span><span class="cursor"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- JAMAIS VERSIONNER -->
+  <section id="jamais">
+    <p class="eyebrow">La règle numéro un</p>
+    <h2>Un CLAUDE.md versionné est un babillard, pas un coffre-fort</h2>
+    <p class="lead">Tout ce qui entre dans un fichier versionné est distribué à chaque personne qui clone le dépôt, relu par Claude à chaque session, et conservé pour toujours dans l'historique git. Le test simple : si vous ne l'afficheriez pas au babillard de la salle d'équipe, ça n'entre pas dans le CLAUDE.md.</p>
+    <div class="dd">
+      <div class="do">
+        <h3>✓ Sa place est dans le CLAUDE.md</h3>
+        <ul>
+          <li>Les conventions de code et de commits de l'équipe</li>
+          <li>Les commandes du projet (tests, lint, build)</li>
+          <li>L'architecture et le vocabulaire métier</li>
+          <li>Les interdits d'usage (« ne jamais toucher <span class="mono">/legacy</span> »)</li>
+          <li>Les pointeurs vers la documentation interne publique</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <h3>✕ N'y entre JAMAIS</h3>
+        <ul>
+          <li>Clés d'API, jetons, mots de passe — même « temporaires »</li>
+          <li>Chaînes de connexion et URL d'infrastructures sensibles</li>
+          <li>Données clients ou renseignements personnels</li>
+          <li>Secrets d'affaires, projets non annoncés</li>
+          <li>Tout ce qu'on ne mettrait pas dans un courriel à toute l'équipe</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Les secrets ont déjà une maison.</strong>
+      <p>Variables d'environnement, gestionnaire de secrets, fichier <code>.env</code> ignoré par git — et, rappel du module 6.1, une règle <code>Read(./.env)</code> en <code>deny</code> pour que Claude n'y touche jamais. Un secret qui a transité par git est considéré comme compromis : on le révoque, on ne l'efface pas.</p>
+    </div>
+  </section>
+
+  <!-- RÉVISER -->
+  <section id="reviser">
+    <p class="eyebrow">Avant d'installer</p>
+    <h2>Un plugin tiers, ça se passe en entrevue</h2>
+    <p class="lead">Installer un plugin ou un serveur MCP, c'est remettre un trousseau de clés à du code écrit par quelqu'un d'autre : il peut ajouter des commandes, des hooks, des accès à des services externes. On ne remet pas les clés sans vérifier les références — voici la grille d'entrevue.</p>
+    <table class="cmd-table">
+      <thead>
+        <tr><th>Question</th><th>Ce qu'on vérifie</th><th>Signal d'alarme</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>Qui le publie ?</code></td><td>Auteur identifiable, dépôt public actif, éditeur connu ou communauté vivante.</td><td>Auteur anonyme, dépôt abandonné, copie d'un projet populaire.</td></tr>
+        <tr><td><code>Que fait son code ?</code></td><td>Lire les commandes, hooks et scripts avant d'installer — pas seulement le README.</td><td>Code obscurci, binaires sans source, scripts téléchargés à l'exécution.</td></tr>
+        <tr><td><code>Où vont les données ?</code></td><td>Les appels réseau : quels domaines sont contactés, avec quel contenu.</td><td>Envois vers des domaines inconnus ou sans rapport avec la fonction annoncée.</td></tr>
+        <tr><td><code>Quels accès exige-t-il ?</code></td><td>Les outils et permissions demandés sont proportionnels à ce que le plugin fait.</td><td>Accès larges (tout le disque, tout le web) sans justification claire.</td></tr>
+        <tr><td><code>Qui l'approuve chez nous ?</code></td><td>Une révision consignée par la ou le tech lead avant tout déploiement d'équipe.</td><td>Installé « juste pour essayer » directement sur un poste de travail.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <strong>Claude peut faire la pré-lecture pour vous.</strong>
+      <p>« Lis ce plugin et dis-moi ce que ses hooks et scripts font réellement, appels réseau compris » : en quelques minutes, on obtient un portrait honnête. Le verdict, lui, reste humain.</p>
+    </div>
+  </section>
+
+  <!-- STANDARDISER -->
+  <section id="standardiser">
+    <p class="eyebrow">Passer à l'échelle</p>
+    <h2>Une source officielle plutôt que dix copies qui divergent</h2>
+    <p class="lead">Quand chaque personne bricole sa propre configuration, la politique s'effrite en silence. Un plugin d'organisation regroupe les skills, commandes, hooks et réglages approuvés — une seule version, maintenue à un seul endroit, mise à jour pour tout le monde en même temps. Comme la trousse de premiers soins : un contenu standard, un responsable, pas d'improvisation.</p>
+    <div class="tiers">
+      <div class="tier">
+        <code>Tech lead / champion</code>
+        <div>
+          <strong>Maintient le catalogue</strong>
+          <p>Tient le plugin d'organisation à jour, révise les plugins tiers selon la grille, publie les mises à jour et documente ce qui est approuvé.</p>
+        </div>
+      </div>
+      <div class="tier">
+        <code>Gestionnaire</code>
+        <div>
+          <strong>Porte la politique</strong>
+          <p>Fait vivre la charte d'usage, arbitre les demandes d'exception, suit les coûts et s'assure que la conformité et la TI sont dans la boucle.</p>
+        </div>
+      </div>
+      <div class="tier">
+        <code>Chaque équipier</code>
+        <div>
+          <strong>Utilise et signale</strong>
+          <p>Travaille avec le catalogue approuvé, propose des ajouts plutôt que d'installer en douce, et remonte les frictions — une règle contournée est une règle mal calibrée.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DONNÉES -->
+  <section id="donnees">
+    <p class="eyebrow">Confidentialité</p>
+    <h2>Savoir ce qui sort, décider ce qui reste</h2>
+    <p class="lead">Impossible de trancher ce qui est acceptable sans savoir ce qui circule. Le principe est simple : tout ce que Claude lit pour travailler est envoyé à l'API pour produire ses réponses — le reste ne bouge pas de vos machines.</p>
+    <div class="grid3">
+      <div class="card">
+        <span class="ic">📤</span>
+        <h3>Ce qui sort</h3>
+        <p>Vos demandes, les fichiers que Claude lit, le contexte chargé (CLAUDE.md, skills) : tout cela transite vers l'API d'Anthropic pour générer les réponses.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🗄️</span>
+        <h3>Ce qui reste</h3>
+        <p>Le reste du dépôt — Claude ne lit que le nécessaire — et tout ce que vos règles <code>deny</code> mettent hors d'atteinte : secrets, dossiers sensibles, données clients.</p>
+      </div>
+      <div class="card">
+        <span class="ic">📜</span>
+        <h3>Ce que dit l'entente</h3>
+        <p>Les offres commerciales n'utilisent pas vos données pour entraîner les modèles par défaut. Faites valider l'entente qui couvre vos comptes par la conformité — une fois, par écrit.</p>
+      </div>
+    </div>
+    <div class="note">
+      <strong>La question à poser pour chaque dépôt : « si ce contenu sortait, quel serait l'impact ? »</strong>
+      <p>Réponse « aucun » : on fonce. Réponse « gênant » : on encadre avec des <code>deny</code>. Réponse « grave » (données réglementées, code sous entente stricte) : ce dépôt attend une décision explicite de la conformité avant d'ouvrir Claude dedans.</p>
+    </div>
+  </section>
+
+  <!-- CHARTE -->
+  <section id="charte">
+    <p class="eyebrow">Atelier de clôture</p>
+    <h2>La charte d'usage : le code de la route de l'équipe</h2>
+    <p class="lead">Pas un document juridique de quarante pages : une seule page qui dit ce qui est permis, ce qui est encadré, ce qui est interdit — et qui décide. Rédigée avec l'équipe plutôt qu'imposée d'en haut : c'est ce qui fait qu'elle sera suivie.</p>
+    <div class="steps">
+      <div class="step"><h3>Nommer les interdits</h3><p>Secrets, données clients, dépôts exclus : la liste courte et non négociable, formulée sans ambiguïté.</p></div>
+      <div class="step"><h3>Cadrer les approbations</h3><p>Qui révise les plugins, qui modifie le <span class="mono">settings.json</span> du projet, qui tranche les exceptions.</p></div>
+      <div class="step"><h3>Outiller la règle</h3><p>Traduire la charte en <span class="mono">deny</span>/<span class="mono">allow</span>, hooks et plugin d'organisation. Une règle outillée survit aux départs.</p></div>
+      <div class="step"><h3>Réviser à date fixe</h3><p>L'outil évolue vite : relire la charte chaque trimestre, retirer ce qui bloque pour rien, ajouter ce qui manque.</p></div>
+    </div>
+
+    <div class="demo">
+      <span class="badge">🎬 DÉMO LIVE</span>
+      <div>
+        <h3>Atelier : réviser un vrai plugin, amorcer la charte</h3>
+        <ol>
+          <li>Ouvrir un plugin réel proposé par la salle et dérouler la grille d'entrevue, question par question.</li>
+          <li>Demander à Claude : « résume ce que font les hooks et scripts de ce plugin, appels réseau compris ».</li>
+          <li>Rendre le verdict ensemble : installer, installer avec restrictions, ou refuser — et noter pourquoi.</li>
+          <li>Amorcer la charte au tableau : recueillir trois interdits et une règle d'approbation. Le brouillon repart avec l'équipe.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- RETENIR -->
+  <section id="retenir" style="border:none">
+    <div class="keys">
+      <p class="eyebrow" style="color:var(--term-green)">L'essentiel</p>
+      <h2>À retenir du module 6.2</h2>
+      <ol>
+        <li><strong>Un fichier versionné est public.</strong> Jamais de secrets ni de données sensibles dans un CLAUDE.md — le test du babillard.</li>
+        <li><strong>Réviser avant d'installer.</strong> Plugins et MCP tiers passent l'entrevue : auteur, code, appels réseau, accès demandés.</li>
+        <li><strong>Standardiser par un plugin d'organisation.</strong> Une source officielle avec un responsable nommé, plutôt que dix configurations qui divergent.</li>
+        <li><strong>La charte s'outille.</strong> Une règle écrite s'oublie ; traduite en permissions et hooks, elle s'applique toute seule.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    <div class="next">
+      <a href="f6-01-permissions.html" style="color:var(--ink-soft);font-weight:500">← Module 6.1 — Le modèle de permissions</a>
+      <div class="end">
+        <strong>🎓 Fin du parcours</strong>
+        <small>Envie de consolider les bases ? <a href="f0-01-claude-md.html">Revenir au module F0 — CLAUDE.md</a></small>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

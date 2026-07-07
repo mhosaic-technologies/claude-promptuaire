@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formations Claude Code · Mhosaic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F6F9; --card:#FFFFFF; --ink:#141D2C; --ink-soft:#4B586E;
+    --line:#DDE3EC;
+    --f0:#4F5DE8; --f0-soft:#E7EAFC;
+    --m1:#4F5DE8; --m2:#0FA47A; --m3:#D97E1A;
+    --f6:#C0442E; --f6-soft:#F8E4E0;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.6;font-size:17px}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.15}
+  code,.mono{font-family:'IBM Plex Mono',monospace}
+  a:focus-visible{outline:2px solid var(--f0);outline-offset:2px}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(244,246,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1060px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .nav-title{font-family:'Space Grotesk';font-weight:700;font-size:1rem}
+  .back{margin-left:auto;color:var(--ink-soft);text-decoration:none;font-size:.85rem;font-weight:500;padding:6px 10px;border-radius:8px}
+  .back:hover{background:var(--f0-soft);color:var(--f0)}
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  header.hero{padding:64px 0 40px}
+  .eyebrow{font-family:'IBM Plex Mono';font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--f0);font-weight:500;margin-bottom:12px}
+  .hero h1{font-size:clamp(2rem,4.5vw,3rem);font-weight:700;margin-bottom:14px}
+  .hero p{color:var(--ink-soft);font-size:1.1rem;max-width:620px}
+
+  section{padding:36px 0 8px}
+  .form-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .form-pill{color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.8rem;letter-spacing:.08em;padding:5px 12px;border-radius:99px;white-space:nowrap}
+  .form-head h2{font-size:1.4rem}
+  .form-head small{color:var(--ink-soft);font-size:.85rem;margin-left:auto}
+
+  .mods{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px}
+  .mod{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-top:5px solid;border-radius:var(--radius);padding:22px;transition:transform .15s,box-shadow .15s}
+  .mod:hover{transform:translateY(-3px);box-shadow:0 14px 34px -18px rgba(20,29,44,.35)}
+  .mod .num{font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.1em;color:var(--ink-soft)}
+  .mod h3{font-size:1.05rem;margin:8px 0 6px}
+  .mod p{color:var(--ink-soft);font-size:.9rem}
+  .mod .meta{margin-top:14px;font-size:.8rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px}
+  .mod .meta i{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .mod .go{font-family:'Space Grotesk';font-weight:700;font-size:.85rem;margin-left:auto}
+
+  .soon{background:var(--card);border:1px dashed var(--line);border-radius:var(--radius);padding:16px 22px;color:var(--ink-soft);font-size:.9rem;margin:8px 0 28px}
+
+  footer{padding:36px 0 56px;border-top:1px solid var(--line);margin-top:28px}
+  .foot-in{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--ink-soft);font-size:.85rem}
+  footer a{color:var(--f0);text-decoration:none;font-weight:600}
+  footer a:hover{text-decoration:underline}
+
+  @media(max-width:820px){
+    .mods{grid-template-columns:1fr}
+    header.hero{padding:44px 0 28px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="nav-title">🎓 Formations Claude Code</span>
+    <a class="back" href="../">← Le Promptuaire</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Mhosaic · Parcours de formation</p>
+    <h1>Les formations, module par module</h1>
+    <p>Les supports one-page des formations Claude Code : chaque module se lit en autonomie ou accompagne la session live. Le <a href="../" style="color:var(--f0);font-weight:600;text-decoration:none">Promptuaire</a> reste la référence des commandes au quotidien.</p>
+  </header>
+
+  <!-- F0 -->
+  <section>
+    <div class="form-head">
+      <span class="form-pill" style="background:var(--f0)">FORMATION F0</span>
+      <h2>Initiation à Claude Code</h2>
+      <small>3 modules · ~1 h 40</small>
+    </div>
+    <div class="mods">
+      <a class="mod" style="border-top-color:var(--m1)" href="f0-01-claude-md.html">
+        <span class="num">MODULE 1 / 3</span>
+        <h3>CLAUDE.md, la mémoire du projet</h3>
+        <p>Pourquoi Claude repart de zéro, comment <span class="mono">/init</span> lui donne une mémoire durable, et l'art d'un fichier court et toujours vrai.</p>
+        <span class="meta"><i style="background:var(--m1)"></i>~30 min <span class="go" style="color:var(--m1)">Ouvrir →</span></span>
+      </a>
+      <a class="mod" style="border-top-color:var(--m2)" href="f0-02-skills.html">
+        <span class="num">MODULE 2 / 3</span>
+        <h3>Les skills : enseigner des savoir-faire</h3>
+        <p>Un dossier, un SKILL.md, une description qui déclenche : vos méthodes empaquetées une fois pour toutes — et Skill Creator pour aller vite.</p>
+        <span class="meta"><i style="background:var(--m2)"></i>~40 min <span class="go" style="color:var(--m2)">Ouvrir →</span></span>
+      </a>
+      <a class="mod" style="border-top-color:var(--m3)" href="f0-03-commandes.html">
+        <span class="num">MODULE 3 / 3</span>
+        <h3>Les commandes : piloter Claude Code</h3>
+        <p>Les intégrées à connaître (/init, /compact, /context…), et vos commandes personnalisées avec $ARGUMENTS, @fichier et !`commande`.</p>
+        <span class="meta"><i style="background:var(--m3)"></i>~30 min <span class="go" style="color:var(--m3)">Ouvrir →</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- F6 -->
+  <section>
+    <div class="form-head">
+      <span class="form-pill" style="background:var(--f6)">FORMATION F6</span>
+      <h2>Sécurité et gouvernance d'équipe</h2>
+      <small>2 modules · ~1 h 20</small>
+    </div>
+    <div class="mods" style="grid-template-columns:repeat(2,1fr)">
+      <a class="mod" style="border-top-color:var(--f6)" href="f6-01-permissions.html">
+        <span class="num">MODULE 6.1</span>
+        <h3>Le modèle de permissions</h3>
+        <p>Lecture libre, action sous accord : les listes allow / ask / deny, les portées (utilisateur, projet, organisation) et les hooks qui veillent.</p>
+        <span class="meta"><i style="background:var(--f6)"></i>~40 min <span class="go" style="color:var(--f6)">Ouvrir →</span></span>
+      </a>
+      <a class="mod" style="border-top-color:var(--f6)" href="f6-02-politique-equipe.html">
+        <span class="num">MODULE 6.2</span>
+        <h3>La politique d'équipe</h3>
+        <p>Jamais de secrets dans un fichier versionné, la grille d'entrevue des plugins tiers, et la charte d'usage qui s'outille en permissions.</p>
+        <span class="meta"><i style="background:var(--f6)"></i>~40 min <span class="go" style="color:var(--f6)">Ouvrir →</span></span>
+      </a>
+    </div>
+  </section>
+
+  <p class="soon">📚 Les autres formations du parcours (F1 à F5, F7) s'ajouteront ici au fil des sessions.</p>
+
+  <footer>
+    <div class="foot-in">
+      <span>Created by <a href="https://www.mhosaic.com/fr" target="_blank" rel="noopener">Mhosaic</a> — Aurelien</span>
+      <span><a href="../">Le Promptuaire — toutes les commandes Claude →</a></span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

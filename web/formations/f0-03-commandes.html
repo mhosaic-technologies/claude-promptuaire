@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3 — Les commandes · Initiation à Claude Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F6F9; --card:#FFFFFF; --ink:#141D2C; --ink-soft:#4B586E;
+    --line:#DDE3EC;
+    --accent:#D97E1A; --accent-soft:#FBEEDC; --accent-dark:#A85F0E;
+    --amber:#E8952D; --amber-soft:#FCF1DF;
+    --term-bg:#0D1421; --term-line:#1C2942; --term-green:#7EE787; --term-blue:#79B8FF; --term-text:#C6D3E6; --term-dim:#5C6F8F; --term-yellow:#F2CC60;
+    --radius:14px;
+    --mod:#D97E1A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.6;font-size:17px}
+  ::selection{background:var(--accent-soft)}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.15}
+  code,pre,.mono{font-family:'IBM Plex Mono',monospace}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(244,246,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1060px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .mod-pill{background:var(--mod);color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.8rem;letter-spacing:.08em;padding:5px 12px;border-radius:99px;white-space:nowrap}
+  .nav-title{font-family:'Space Grotesk';font-weight:700;font-size:1rem}
+  .nav-links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+  .nav-links a{color:var(--ink-soft);text-decoration:none;font-size:.82rem;font-weight:500;padding:6px 10px;border-radius:8px}
+  .nav-links a:hover,.nav-links a:focus-visible{background:var(--accent-soft);color:var(--accent-dark)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:'IBM Plex Mono';font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mod);font-weight:500;margin-bottom:12px}
+  h2{font-size:2rem;margin-bottom:8px}
+  .lead{color:var(--ink-soft);font-size:1.08rem;max-width:660px;margin-bottom:32px}
+
+  .hero{padding:72px 0 64px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.3rem,5vw,3.4rem);font-weight:700;margin:14px 0 18px}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{color:var(--ink-soft);font-size:1.12rem;max-width:480px}
+  .hero-meta{display:flex;gap:18px;margin-top:28px;font-size:.86rem;color:var(--ink-soft)}
+  .hero-meta span{display:flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--mod);display:inline-block}
+
+  .term{background:var(--term-bg);border-radius:var(--radius);box-shadow:0 24px 60px -24px rgba(13,20,33,.55);overflow:hidden;border:1px solid var(--term-line)}
+  .term-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:#111B2E;border-bottom:1px solid var(--term-line)}
+  .term-bar i{width:11px;height:11px;border-radius:50%;display:block}
+  .term-bar i:nth-child(1){background:#FF5F57}.term-bar i:nth-child(2){background:#FEBC2E}.term-bar i:nth-child(3){background:#28C840}
+  .term-bar span{margin-left:8px;color:var(--term-dim);font-family:'IBM Plex Mono';font-size:.74rem}
+  .term-body{padding:18px 20px;font-family:'IBM Plex Mono';font-size:.86rem;color:var(--term-text);line-height:1.75}
+  .p1{color:var(--term-green)} .p2{color:var(--term-blue)} .cm{color:var(--term-dim)} .yl{color:var(--term-yellow)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .card h3{font-size:1.05rem;margin-bottom:8px}
+  .card p{color:var(--ink-soft);font-size:.95rem}
+  .card .ic{font-size:1.5rem;margin-bottom:10px;display:block}
+  .card code{background:var(--accent-soft);color:var(--accent-dark);border-radius:6px;padding:1px 6px;font-size:.85em}
+
+  .demo{background:var(--amber-soft);border:2px dashed var(--amber);border-radius:var(--radius);padding:26px 28px;display:flex;gap:20px;align-items:flex-start;margin:40px 0 0}
+  .demo .badge{background:var(--amber);color:#fff;font-family:'Space Grotesk';font-weight:700;font-size:.78rem;letter-spacing:.06em;padding:6px 12px;border-radius:8px;white-space:nowrap}
+  .demo h3{font-size:1.1rem;margin-bottom:6px}
+  .demo ol{margin:8px 0 0 18px;color:var(--ink-soft);font-size:.95rem}
+  .demo li{margin-bottom:4px}
+  .demo code{background:#fff;border:1px solid #EAD9BC;border-radius:6px;padding:1px 7px;font-size:.85em}
+
+  /* Command table */
+  .cmd-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+  .cmd-table th{font-family:'Space Grotesk';font-size:.85rem;text-align:left;padding:14px 20px;background:var(--ink);color:#fff}
+  .cmd-table td{padding:13px 20px;border-top:1px solid var(--line);font-size:.93rem;color:var(--ink-soft);vertical-align:top}
+  .cmd-table td:first-child{white-space:nowrap}
+  .cmd-table code{background:var(--accent-soft);color:var(--accent-dark);border-radius:6px;padding:2px 8px;font-size:.85rem;font-weight:500}
+  .cmd-table tr:hover td{background:#FAFBFD}
+  .star{color:var(--accent);font-size:.8rem;margin-left:6px}
+
+  /* Anatomy */
+  .anatomy{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  .file{background:var(--term-bg);border-radius:var(--radius);border:1px solid var(--term-line);overflow:hidden}
+  .file-name{padding:10px 16px;background:#111B2E;border-bottom:1px solid var(--term-line);color:var(--term-blue);font-family:'IBM Plex Mono';font-size:.8rem}
+  .file pre{padding:18px 20px;font-size:.8rem;line-height:1.7;color:var(--term-text);overflow-x:auto}
+  .file .h{color:var(--term-green)} .file .d{color:var(--term-dim)} .file .y{color:var(--term-yellow)}
+  .legend{display:flex;flex-direction:column;gap:14px}
+  .legend-item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px}
+  .legend-item strong{font-family:'Space Grotesk';font-size:.95rem;display:block;margin-bottom:3px}
+  .legend-item p{font-size:.88rem;color:var(--ink-soft)}
+  .legend-item code{background:var(--accent-soft);color:var(--accent-dark);border-radius:5px;padding:1px 6px;font-size:.82em}
+
+  /* Note */
+  .note{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:12px;padding:20px 24px;margin-top:28px;max-width:820px}
+  .note strong{font-family:'Space Grotesk'}
+  .note p{font-size:.94rem;color:var(--ink-soft);margin-top:4px}
+  .note code{background:var(--accent-soft);color:var(--accent-dark);border-radius:5px;padding:1px 6px;font-size:.85em}
+
+  /* Versus */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .vs .card h3 span{display:inline-block;font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border-radius:5px;padding:2px 8px;margin-right:8px;vertical-align:middle}
+  .vs .auto span{background:#DEF4EC;color:#0A7C5C}
+  .vs .manual span{background:var(--accent-soft);color:var(--accent-dark)}
+  .vs ul{list-style:none;margin-top:12px}
+  .vs li{padding:6px 0 6px 22px;position:relative;font-size:.92rem;color:var(--ink-soft)}
+  .vs li::before{content:"→";position:absolute;left:0;color:var(--accent)}
+
+  /* Recap 3 modules */
+  .recap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .recap .card{border-top:5px solid}
+  .recap .m1{border-top-color:#4F5DE8}
+  .recap .m2{border-top-color:#0FA47A}
+  .recap .m3{border-top-color:#D97E1A}
+  .recap .num{font-family:'IBM Plex Mono';font-size:.75rem;color:var(--ink-soft);letter-spacing:.1em}
+
+  .keys{background:var(--ink);color:#EDF1F8;border-radius:var(--radius);padding:36px 40px}
+  .keys h2{color:#fff}
+  .keys ol{counter-reset:k;list-style:none;margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px 32px}
+  .keys li{counter-increment:k;padding-left:44px;position:relative;font-size:.98rem;color:#C4CEDF}
+  .keys li strong{color:#fff}
+  .keys li::before{content:counter(k,decimal-leading-zero);position:absolute;left:0;top:2px;font-family:'IBM Plex Mono';color:var(--term-green);font-size:.85rem}
+
+  footer{padding:40px 0 64px}
+  .next{display:flex;justify-content:space-between;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 28px;flex-wrap:wrap}
+  .next a{font-family:'Space Grotesk';font-weight:700;color:var(--accent-dark);text-decoration:none;font-size:1.02rem}
+  .next a:hover{text-decoration:underline}
+
+  @media(max-width:820px){
+    .hero,.grid2,.grid3,.anatomy,.vs,.recap{grid-template-columns:1fr}
+    .keys ol{grid-template-columns:1fr}
+    section{padding:48px 0}
+    .nav-links{display:none}
+    .cmd-table td,.cmd-table th{padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="mod-pill">MODULE 3 / 3</span>
+    <span class="nav-title">Les commandes</span>
+    <div class="nav-links">
+      <a href="#quoi">C'est quoi</a>
+      <a href="#integrees">Intégrées</a>
+      <a href="#custom">Personnalisées</a>
+      <a href="#vs">Skill ou commande ?</a>
+      <a href="#recap">Récap</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Initiation à Claude Code · Module 3</p>
+      <h1>Les commandes : <em>piloter</em> Claude Code</h1>
+      <p>Tout ce qui commence par <span class="mono">/</span> dans Claude Code est une commande. Certaines sont fournies d'origine, d'autres sont les vôtres. C'est le tableau de bord de vos sessions.</p>
+      <div class="hero-meta">
+        <span><i class="dot"></i>~30 minutes</span>
+        <span><i class="dot"></i>Boucle avec les modules 1 et 2</span>
+      </div>
+    </div>
+    <div class="term" aria-label="Aperçu du terminal">
+      <div class="term-bar"><i></i><i></i><i></i><span>mon-projet — claude</span></div>
+      <div class="term-body">
+        <span class="p1">&gt;</span> /<br>
+        <span class="cm">┌──────────────────────────────┐</span><br>
+        <span class="cm">│</span> <span class="yl">/init</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Générer CLAUDE.md&nbsp;&nbsp;<span class="cm">│</span><br>
+        <span class="cm">│</span> <span class="yl">/compact</span>&nbsp;&nbsp;Compresser contexte <span class="cm">│</span><br>
+        <span class="cm">│</span> <span class="yl">/model</span>&nbsp;&nbsp;&nbsp;&nbsp;Changer de modèle&nbsp;&nbsp;<span class="cm">│</span><br>
+        <span class="cm">│</span> <span class="yl">/skills</span>&nbsp;&nbsp;&nbsp;Lister les skills&nbsp;&nbsp;<span class="cm">│</span><br>
+        <span class="cm">└──────────────────────────────┘</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- C'EST QUOI -->
+  <section id="quoi">
+    <p class="eyebrow">La carte du territoire</p>
+    <h2>Deux familles de commandes</h2>
+    <p class="lead">Taper <span class="mono">/</span> dans Claude Code affiche la liste complète, filtrable en tapant les premières lettres. Derrière ce menu, deux origines bien distinctes.</p>
+    <div class="grid2">
+      <div class="card">
+        <span class="ic">🏗️</span>
+        <h3>Les commandes intégrées</h3>
+        <p>Fournies avec Claude Code : gérer la session, le contexte, le modèle. Elles sont fixes et toujours disponibles — comme les boutons d'un tableau de bord.</p>
+      </div>
+      <div class="card">
+        <span class="ic">🛠️</span>
+        <h3>Les commandes personnalisées</h3>
+        <p>Créées par vous ou votre équipe : vos raccourcis vers des instructions réutilisables. Depuis le module 2, vous savez déjà les créer — chaque skill devient une commande <code>/nom</code> !</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGREES -->
+  <section id="integrees">
+    <p class="eyebrow">La boîte à outils</p>
+    <h2>Les commandes intégrées à connaître</h2>
+    <p class="lead">Il en existe des dizaines ; voici celles qui servent tous les jours. Les étoiles ★ marquent les indispensables du quotidien.</p>
+    <table class="cmd-table">
+      <thead><tr><th>Commande</th><th>Ce qu'elle fait</th><th>Quand l'utiliser</th></tr></thead>
+      <tbody>
+        <tr><td><code>/help</code></td><td>Affiche l'aide et la liste des commandes.</td><td>Quand on débute ou qu'on cherche une commande.</td></tr>
+        <tr><td><code>/init</code><span class="star">★</span></td><td>Génère le CLAUDE.md du projet (module 1).</td><td>Une fois, au démarrage de chaque nouveau projet.</td></tr>
+        <tr><td><code>/clear</code></td><td>Efface la conversation et repart à neuf.</td><td>Quand on change complètement de sujet.</td></tr>
+        <tr><td><code>/compact</code><span class="star">★</span></td><td>Compresse l'historique pour libérer du contexte.</td><td>Sessions longues : avant d'attaquer une nouvelle phase.</td></tr>
+        <tr><td><code>/context</code></td><td>Montre ce qui occupe la mémoire de travail.</td><td>Pour comprendre ce que Claude « voit » en ce moment.</td></tr>
+        <tr><td><code>/model</code></td><td>Change de modèle (plus rapide ↔ plus puissant).</td><td>Selon la complexité de la tâche.</td></tr>
+        <tr><td><code>/skills</code><span class="star">★</span></td><td>Liste tous les skills disponibles (module 2).</td><td>Pour découvrir ce que la session sait faire.</td></tr>
+        <tr><td><code>/diff</code></td><td>Affiche toutes les modifications faites par Claude.</td><td>Point de contrôle avant de valider une série de changements.</td></tr>
+        <tr><td><code>/cost</code></td><td>Affiche la consommation de la session.</td><td>Pour garder un œil sur l'utilisation.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- CUSTOM -->
+  <section id="custom">
+    <p class="eyebrow">Vos propres raccourcis</p>
+    <h2>Créer une commande personnalisée</h2>
+    <p class="lead">Une commande personnalisée, c'est un fichier Markdown dont le contenu est envoyé à Claude quand on tape <span class="mono">/son-nom</span>. Trois super-pouvoirs la rendent dynamique.</p>
+
+    <div class="anatomy">
+      <div class="file">
+        <div class="file-name">.claude/skills/revue/SKILL.md</div>
+        <pre><span class="d">---</span>
+<span class="y">name:</span> revue
+<span class="y">description:</span> Revue de code des
+  changements en cours
+<span class="y">disable-model-invocation:</span> true
+<span class="d">---</span>
+
+<span class="h">## Changements à examiner</span>
+!<span class="d">`git diff`</span>
+
+<span class="h">## Normes de l'équipe</span>
+@normes-equipe.md
+
+<span class="h">## Consigne</span>
+Fais la revue des changements
+ci-dessus en te concentrant sur :
+$ARGUMENTS
+
+Classe tes retours par priorité.</pre>
+      </div>
+      <div class="legend">
+        <div class="legend-item">
+          <strong><code>$ARGUMENTS</code> — les paramètres</strong>
+          <p>Ce qu'on tape après la commande est injecté ici. <code>/revue la sécurité</code> → « …en te concentrant sur : la sécurité ».</p>
+        </div>
+        <div class="legend-item">
+          <strong><code>@fichier</code> — inclure un fichier</strong>
+          <p>Le contenu du fichier référencé est ajouté automatiquement. Parfait pour joindre normes, gabarits ou configurations.</p>
+        </div>
+        <div class="legend-item">
+          <strong><code>!`commande`</code> — contexte dynamique</strong>
+          <p>Exécute une commande du terminal et injecte son résultat. Ici, la commande reçoit les vrais changements du moment.</p>
+        </div>
+        <div class="legend-item">
+          <strong><code>disable-model-invocation</code></strong>
+          <p>Empêche le déclenchement automatique : la commande ne s'exécute que si <em>vous</em> la tapez. Utile pour les actions qu'on veut garder sous contrôle.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📜 Note pour les personnes qui connaissent déjà</strong>
+      <p>Historiquement, les commandes vivaient dans <code>.claude/commands/*.md</code>. Ce format fonctionne toujours, mais il est désormais <em>legacy</em> : commandes et skills ont fusionné. Le format recommandé est <code>.claude/skills/nom/SKILL.md</code> — même invocation <code>/nom</code>, plus les fichiers d'appui et le déclenchement automatique en bonus.</p>
+    </div>
+
+    <div class="demo">
+      <span class="badge">🎬 DÉMO LIVE</span>
+      <div>
+        <h3>On passe au partage d'écran</h3>
+        <ol>
+          <li>Taper <code>/</code> dans Claude Code et explorer le menu des commandes ensemble.</li>
+          <li>Dérouler 2-3 intégrées en direct : <code>/context</code>, <code>/skills</code>, <code>/compact</code>.</li>
+          <li>Créer une commande personnalisée simple en direct (ou réutiliser le skill créé au module 2).</li>
+          <li>L'invoquer avec un argument : <code>/revue la lisibilité</code> — et observer le résultat.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- VS -->
+  <section id="vs">
+    <p class="eyebrow">Le bon réflexe</p>
+    <h2>Déclenchement automatique ou manuel ?</h2>
+    <p class="lead">C'est le même fichier dans les deux cas — la vraie question est : qui décide du moment ? Claude, ou vous ?</p>
+    <div class="vs">
+      <div class="card auto">
+        <h3><span>Automatique</span>Laisser Claude décider</h3>
+        <ul>
+          <li>Tâches fréquentes où on veut que « ça marche tout seul »</li>
+          <li>La description du skill sert de déclencheur</li>
+          <li>Exemples : appliquer un gabarit, respecter une méthode de rédaction</li>
+        </ul>
+      </div>
+      <div class="card manual">
+        <h3><span>Manuel</span>Garder la main avec /</h3>
+        <ul>
+          <li>Actions ponctuelles ou sensibles qu'on veut déclencher soi-même</li>
+          <li>Ajouter <code>disable-model-invocation: true</code> au besoin</li>
+          <li>Exemples : revue de code, préparation de release, rapport hebdo</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECAP -->
+  <section id="recap">
+    <p class="eyebrow">La boucle est bouclée</p>
+    <h2>Les trois piliers, ensemble</h2>
+    <p class="lead">CLAUDE.md, skills et commandes ne sont pas trois outils isolés : c'est un système. Le contexte, les savoir-faire, et le pilotage.</p>
+    <div class="recap">
+      <div class="card m1">
+        <p class="num">MODULE 01</p>
+        <h3>CLAUDE.md</h3>
+        <p><strong>Le contexte permanent.</strong> Ce que Claude doit toujours savoir sur le projet. Généré avec <code>/init</code>, affiné à la main.</p>
+      </div>
+      <div class="card m2">
+        <p class="num">MODULE 02</p>
+        <h3>Les skills</h3>
+        <p><strong>Les savoir-faire.</strong> Vos méthodes empaquetées, déclenchées automatiquement grâce à leur description — ou à la demande.</p>
+      </div>
+      <div class="card m3">
+        <p class="num">MODULE 03</p>
+        <h3>Les commandes</h3>
+        <p><strong>Le pilotage.</strong> Gérer la session avec les intégrées, déclencher vos skills à volonté avec <code>/nom</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RETENIR -->
+  <section id="retenir" style="border:none">
+    <div class="keys">
+      <p class="eyebrow" style="color:var(--term-green)">L'essentiel</p>
+      <h2>À retenir du module 3</h2>
+      <ol>
+        <li><strong>Taper / ouvre le menu.</strong> Le meilleur moyen de découvrir ce qui est disponible.</li>
+        <li><strong>Cinq intégrées à retenir :</strong> /init, /compact, /context, /skills, /diff.</li>
+        <li><strong>Trois super-pouvoirs :</strong> $ARGUMENTS, @fichier et !`commande` rendent vos commandes dynamiques.</li>
+        <li><strong>Commandes = skills.</strong> Un seul format à apprendre ; le choix, c'est automatique vs manuel.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    <div class="next">
+      <a href="f0-02-skills.html" style="color:var(--ink-soft);font-weight:500">← Module 2 — Les skills</a>
+      <span style="text-align:right"><span style="font-family:'Space Grotesk';font-weight:700;display:block">🎉 Fin de la formation — place aux questions !</span>
+      <small>Pour continuer le parcours : <a href="f1-01-fenetre-contexte.html">F1 — Maîtriser le contexte et le workflow →</a></small></span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
